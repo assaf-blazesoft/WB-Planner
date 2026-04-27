@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
 import { weekToStartDate, weekToEndDate, formatDate } from '../utils/dates';
-import { TRACK_COLORS } from '../lib/constants';
+import { TRACK_COLORS, TRACKS } from '../lib/constants';
 
 const WEEK_W = 160;
 const ROW_H = 40;
@@ -9,8 +9,6 @@ const LANE_H = 34;
 const HEADER_H = 52;
 const LEFT_W = 220;
 const HANDLE_W = 8;
-
-const TRACK_ORDER = ['ops', 'economy', 'marketing', 'feature', 'ongoing'];
 
 function todayOffset(projectStartDate, totalWeeks) {
   const start = new Date(projectStartDate);
@@ -100,11 +98,11 @@ export default function GanttView({ onSelectTask }) {
   const totalWeeks = project.total_weeks;
   const svgWidth = totalWeeks * WEEK_W;
 
-  // Group by track, sorted by starting week within each track
-  const grouped = TRACK_ORDER.map(trackId => ({
-    track: project.tracks.find(t => t.id === trackId) || { id: trackId, name: trackId, color: TRACK_COLORS[trackId] },
+  // Group by track in the canonical order defined in constants.js
+  const grouped = TRACKS.map(track => ({
+    track,
     tasks: tasks
-      .filter(t => t.track === trackId)
+      .filter(t => t.track === track.id)
       .slice()
       .sort((a, b) => Math.min(...a.weeks) - Math.min(...b.weeks)),
   }));
