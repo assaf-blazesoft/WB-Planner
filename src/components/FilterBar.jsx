@@ -1,21 +1,9 @@
 import React, { useRef } from 'react';
 import { useStore } from '../store/tasks';
+import { STATUSES as BASE_STATUSES, PRIORITIES as BASE_PRIORITIES } from '../lib/constants';
 
-const STATUSES = [
-  { value: '', label: 'All statuses' },
-  { value: 'not_started', label: 'Not Started' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'blocked', label: 'Blocked' },
-  { value: 'done', label: 'Done' },
-  { value: 'conditional', label: 'Conditional' },
-];
-
-const PRIORITIES = [
-  { value: '', label: 'All priorities' },
-  { value: 'high', label: 'High' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'low', label: 'Low' },
-];
+const STATUSES = [{ value: '', label: 'All statuses' }, ...BASE_STATUSES];
+const PRIORITIES = [{ value: '', label: 'All priorities' }, ...BASE_PRIORITIES];
 
 export default function FilterBar({ searchRef }) {
   const project = useStore(s => s.project);

@@ -2,27 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
 import { weekRangeLabel } from '../utils/dates';
 import { downloadCSV, downloadJSON, csvToTasks } from '../utils/csv';
-
-const STATUS_COLORS = {
-  not_started: '#6b7280',
-  in_progress: '#378ADD',
-  blocked: '#ef4444',
-  done: '#22c55e',
-  conditional: '#EF9F27',
-};
-
-const TRACK_COLORS = {
-  ops: '#378ADD',
-  economy: '#1D9E75',
-  feature: '#7F77DD',
-  ongoing: '#888780',
-};
-
-const PRIORITY_COLORS = {
-  high: '#ef4444',
-  medium: '#EF9F27',
-  low: '#22c55e',
-};
+import { STATUS_COLORS, TRACK_COLORS, PRIORITY_COLORS, STATUSES, TRACKS, PRIORITIES } from '../lib/constants';
 
 const COLUMNS = [
   { key: 'title',           label: 'Title',      editable: true },
@@ -198,15 +178,6 @@ export default function TableView({ onSelectTask }) {
   );
 }
 
-const TRACK_OPTIONS = ['ops', 'economy', 'feature', 'ongoing'];
-const STATUS_OPTIONS = [
-  { value: 'not_started', label: 'Not Started' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'blocked', label: 'Blocked' },
-  { value: 'done', label: 'Done' },
-  { value: 'conditional', label: 'Conditional' },
-];
-const PRIORITY_OPTIONS = ['high', 'medium', 'low'];
 
 function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCancel, project }) {
   const isEditing = editing?.id === task.id && editing?.key === col.key;
@@ -233,7 +204,7 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
           onChange={e => setEditVal(e.target.value)}
           onBlur={onCommit}
           onKeyDown={e => { if (e.key === 'Enter') onCommit(); if (e.key === 'Escape') onCancel(); }}>
-          {TRACK_OPTIONS.map(v => <option key={v} value={v}>{v}</option>)}
+          {TRACKS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
       );
     }
@@ -253,7 +224,7 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
           onChange={e => setEditVal(e.target.value)}
           onBlur={onCommit}
           onKeyDown={e => { if (e.key === 'Enter') onCommit(); if (e.key === 'Escape') onCancel(); }}>
-          {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          {STATUSES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       );
     }
@@ -273,7 +244,7 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
           onChange={e => setEditVal(e.target.value)}
           onBlur={onCommit}
           onKeyDown={e => { if (e.key === 'Enter') onCommit(); if (e.key === 'Escape') onCancel(); }}>
-          {PRIORITY_OPTIONS.map(v => <option key={v} value={v}>{v}</option>)}
+          {PRIORITIES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
         </select>
       );
     }

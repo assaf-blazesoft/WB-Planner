@@ -1,5 +1,3 @@
-export const OWNER_EMAIL = 'assafc@blazesoft.ca';
-
 export const TRACK_COLORS = {
   ops:     '#378ADD',
   economy: '#1D9E75',

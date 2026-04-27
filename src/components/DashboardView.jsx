@@ -6,21 +6,7 @@ import {
 } from 'recharts';
 import { useStore, useFilteredTasks } from '../store/tasks';
 import { weekToEndDate, elapsedFraction } from '../utils/dates';
-
-const TRACK_COLORS = {
-  ops: '#378ADD',
-  economy: '#1D9E75',
-  feature: '#7F77DD',
-  ongoing: '#888780',
-};
-
-const STATUS_COLORS = {
-  not_started: '#6b7280',
-  in_progress: '#378ADD',
-  blocked: '#ef4444',
-  done: '#22c55e',
-  conditional: '#EF9F27',
-};
+import { TRACK_COLORS, STATUS_COLORS } from '../lib/constants';
 
 export default function DashboardView({ onSelectTask }) {
   const tasks = useFilteredTasks();

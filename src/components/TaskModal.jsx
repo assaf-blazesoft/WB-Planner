@@ -1,26 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/tasks';
-
-const TRACKS = [
-  { id: 'ops', name: 'Operations Automation' },
-  { id: 'economy', name: 'Economy Automation' },
-  { id: 'feature', name: 'New Features' },
-  { id: 'ongoing', name: 'Ongoing / Foundation' },
-];
-
-const STATUSES = [
-  { value: 'not_started', label: 'Not Started' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'blocked', label: 'Blocked' },
-  { value: 'done', label: 'Done' },
-  { value: 'conditional', label: 'Conditional' },
-];
-
-const PRIORITIES = [
-  { value: 'high', label: 'High' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'low', label: 'Low' },
-];
+import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
 
 const DEFAULT_FORM = {
   title: '',

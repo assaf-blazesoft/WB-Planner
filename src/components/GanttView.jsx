@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
-import { weekToStartDate, weekToEndDate, formatDate } from '../utils/dates';
+import { weekToStartDate, formatDate } from '../utils/dates';
+import { TRACK_COLORS } from '../lib/constants';
 
 const WEEK_W = 160;
 const ROW_H = 40;
@@ -8,13 +9,6 @@ const LANE_H = 34;
 const HEADER_H = 52;
 const LEFT_W = 220;
 const HANDLE_W = 8;
-
-const TRACK_COLORS = {
-  ops: '#378ADD',
-  economy: '#1D9E75',
-  feature: '#7F77DD',
-  ongoing: '#888780',
-};
 
 const TRACK_ORDER = ['ops', 'economy', 'feature', 'ongoing'];
 
