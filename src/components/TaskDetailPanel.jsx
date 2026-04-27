@@ -282,7 +282,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
         {/* Notes */}
         <div>
           <label className="label">Notes</label>
-          <textarea className="input w-full resize-none font-mono text-xs" rows={4}
+          <textarea className="input w-full resize-none mono" rows={4}
             value={form.notes}
             onChange={e => field('notes', e.target.value)}
             onBlur={handleBlur} />
@@ -347,7 +347,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
           <TaskComments taskId={taskId} taskTitle={task.title} />
         </div>
 
-        <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>ID: {task.id}</p>
+        <p className="mono opacity-40">ID: {task.id}</p>
       </div>
 
       {/* Delete confirm */}
