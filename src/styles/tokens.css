@@ -55,7 +55,7 @@
 
 @layer components {
   .input {
-    @apply px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[var(--accent)];
+    @apply px-2 py-1 rounded border text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
     background: var(--surface);
     border-color: var(--border);
     color: var(--text);
@@ -78,7 +78,11 @@
   }
 
   .btn-sm {
-    @apply px-2 py-1 rounded text-xs transition-colors;
+    @apply px-2 py-1 rounded text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
   }
 
   .mono {

@@ -30,7 +30,7 @@ export default function Header({ onNewTask }) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate('/')}
-          className="font-bold text-sm tracking-wide hover:opacity-80 transition-opacity"
+          className="font-bold text-sm tracking-wide hover:opacity-80 transition-opacity focus-ring"
           style={{ color: 'var(--text)' }}
         >
           {project.name}
@@ -42,7 +42,7 @@ export default function Header({ onNewTask }) {
               <button
                 key={v.id}
                 onClick={() => setActiveView(v.id)}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors focus-ring ${
                   activeView === v.id
                     ? 'bg-[var(--accent)] text-white'
                     : 'hover:bg-[var(--surface2)] text-[var(--text-muted)]'
@@ -60,7 +60,7 @@ export default function Header({ onNewTask }) {
         {!isAdminPage && isAdmin && (
           <button
             onClick={() => onNewTask()}
-            className="px-3 py-1 rounded text-xs font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors"
+            className="px-3 py-1 rounded text-xs font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors focus-ring"
           >
             + New task
           </button>
@@ -69,7 +69,7 @@ export default function Header({ onNewTask }) {
         {isAdmin && (
           <button
             onClick={() => navigate(isAdminPage ? '/' : '/admin')}
-            className="px-3 py-1 rounded text-xs font-medium hover:bg-[var(--surface2)] transition-colors"
+            className="px-3 py-1 rounded text-xs font-medium hover:bg-[var(--surface2)] transition-colors focus-ring"
             style={{ color: 'var(--text-muted)' }}
           >
             {isAdminPage ? 'Back' : 'Admin'}
@@ -78,7 +78,7 @@ export default function Header({ onNewTask }) {
 
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="p-1.5 rounded hover:bg-[var(--surface2)] transition-colors"
+          className="p-1.5 rounded hover:bg-[var(--surface2)] transition-colors focus-ring"
           style={{ color: 'var(--text-muted)' }}
           title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
         >
@@ -110,7 +110,7 @@ export default function Header({ onNewTask }) {
             </div>
             <button
               onClick={signOut}
-              className="text-xs hover:text-[var(--text)] transition-colors"
+              className="text-xs hover:text-[var(--text)] transition-colors focus-ring"
               style={{ color: 'var(--text-muted)' }}
             >
               Sign out

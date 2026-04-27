@@ -102,7 +102,7 @@ export default function TaskComments({ taskId, taskTitle }) {
         <button
           type="submit"
           disabled={saving || !text.trim()}
-          className="px-3 py-1 rounded text-xs bg-[var(--accent)] text-white disabled:opacity-40 hover:bg-[var(--accent-hover)] transition-colors"
+          className="px-3 py-1 rounded text-xs bg-[var(--accent)] text-white disabled:opacity-40 hover:bg-[var(--accent-hover)] transition-colors focus-ring"
         >
           Post
         </button>

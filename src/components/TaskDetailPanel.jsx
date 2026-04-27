@@ -132,18 +132,18 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
           {isAdmin && (
             <>
               <button onClick={() => onDuplicate(taskId)}
-                className="text-xs px-2 py-1 rounded hover:bg-[var(--surface2)] transition-colors"
+                className="text-xs px-2 py-1 rounded hover:bg-[var(--surface2)] transition-colors focus-ring"
                 style={{ color: 'var(--text-muted)' }}>
                 Duplicate
               </button>
               <button onClick={() => setConfirmDelete(true)}
-                className="text-xs px-2 py-1 rounded hover:bg-red-500/10 text-red-400 transition-colors">
+                className="text-xs px-2 py-1 rounded hover:bg-red-500/10 text-red-400 transition-colors focus-ring">
                 Delete
               </button>
             </>
           )}
           <button onClick={onClose}
-            className="text-lg leading-none hover:text-[var(--text)] px-1 transition-colors"
+            className="text-lg leading-none hover:text-[var(--text)] px-1 transition-colors focus-ring rounded"
             style={{ color: 'var(--text-muted)' }}>
             ×
           </button>
@@ -191,7 +191,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
             <span className="flex items-center gap-2">
               Suggest: <StatusBadge status={suggestion} />
             </span>
-            <button className="underline shrink-0" onClick={() => handleStatusChange(suggestion)}>
+            <button className="underline shrink-0 focus-ring rounded" onClick={() => handleStatusChange(suggestion)}>
               Apply
             </button>
           </div>
@@ -232,7 +232,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
                       field('weeks', weeks);
                       updateTask(taskId, { ...form, weeks });
                     }}
-                    className={`w-8 h-8 rounded text-xs font-medium transition-colors ${
+                    className={`w-8 h-8 rounded text-xs font-medium transition-colors focus-ring ${
                       active ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'
                     }`}
                   >
@@ -256,10 +256,10 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
             <div className="flex gap-1">
               <button
                 onClick={() => { const v = Math.max(0, form.progress_percent - 10); field('progress_percent', v); updateTask(taskId, { ...form, progress_percent: v }); }}
-                className="w-6 h-6 rounded bg-[var(--surface2)] text-xs" style={{ color: 'var(--text-muted)' }}>−</button>
+                className="w-6 h-6 rounded bg-[var(--surface2)] text-xs focus-ring" style={{ color: 'var(--text-muted)' }}>−</button>
               <button
                 onClick={() => { const v = Math.min(100, form.progress_percent + 10); field('progress_percent', v); updateTask(taskId, { ...form, progress_percent: v }); }}
-                className="w-6 h-6 rounded bg-[var(--surface2)] text-xs" style={{ color: 'var(--text-muted)' }}>+</button>
+                className="w-6 h-6 rounded bg-[var(--surface2)] text-xs focus-ring" style={{ color: 'var(--text-muted)' }}>+</button>
             </div>
           </div>
           <div className="mt-1 h-1.5 rounded-full bg-[var(--surface2)] overflow-hidden">
@@ -308,7 +308,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
                     {a.full_name || a.email}
                     {isAdmin && (
                       <button onClick={() => unassignUser(a.id)}
-                        className="text-red-400 hover:text-red-300 leading-none">×</button>
+                        className="text-red-400 hover:text-red-300 leading-none focus-ring rounded">×</button>
                     )}
                   </div>
                 ))}
@@ -361,11 +361,11 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
           <p className="text-sm" style={{ color: 'var(--text)' }}>Delete this task?</p>
           <div className="flex gap-2">
             <button onClick={() => { deleteTask(taskId); onClose(); }}
-              className="flex-1 py-1.5 rounded bg-red-500 text-white text-xs font-medium">
+              className="flex-1 py-1.5 rounded bg-red-500 text-white text-xs font-medium focus-ring">
               Delete
             </button>
             <button onClick={() => setConfirmDelete(false)}
-              className="flex-1 py-1.5 rounded bg-[var(--surface2)] text-xs"
+              className="flex-1 py-1.5 rounded bg-[var(--surface2)] text-xs focus-ring"
               style={{ color: 'var(--text-muted)' }}>
               Cancel
             </button>

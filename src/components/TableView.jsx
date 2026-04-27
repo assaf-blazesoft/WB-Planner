@@ -203,7 +203,7 @@ export default function TableView({ onSelectTask }) {
                 ))}
                 <td className="td">
                   <button onClick={() => onSelectTask(task.id)}
-                    className="px-2 py-0.5 rounded text-xs text-[var(--accent)] hover:bg-[var(--accent)]/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    className="px-2 py-0.5 rounded text-xs text-[var(--accent)] hover:bg-[var(--accent)]/10 opacity-0 group-hover:opacity-100 transition-opacity focus-ring focus:opacity-100">
                     Open
                   </button>
                 </td>

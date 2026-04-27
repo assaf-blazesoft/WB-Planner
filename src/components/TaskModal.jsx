@@ -57,7 +57,7 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
       >
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-base" style={{ color: 'var(--text)' }}>New Task</h2>
-          <button type="button" onClick={onClose} className="text-lg text-[var(--text-muted)] hover:text-[var(--text)]">×</button>
+          <button type="button" onClick={onClose} className="text-lg text-[var(--text-muted)] hover:text-[var(--text)] focus-ring rounded">×</button>
         </div>
 
         <div>
@@ -113,7 +113,7 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
                     const next = active ? current.filter(x => x !== w) : [...current, w].sort((a,b) => a-b);
                     setWeekStr(next.join(', '));
                   }}
-                  className={`w-8 h-8 rounded text-xs font-medium transition-colors ${active ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'}`}
+                  className={`w-8 h-8 rounded text-xs font-medium transition-colors focus-ring ${active ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'}`}
                 >
                   {w}
                 </button>
@@ -134,11 +134,11 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
 
         <div className="flex justify-end gap-2 pt-2">
           <button type="button" onClick={onClose}
-            className="px-4 py-1.5 rounded text-sm text-[var(--text-muted)] hover:bg-[var(--surface2)]">
+            className="px-4 py-1.5 rounded text-sm text-[var(--text-muted)] hover:bg-[var(--surface2)] focus-ring">
             Cancel
           </button>
           <button type="submit"
-            className="px-4 py-1.5 rounded text-sm bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] font-medium">
+            className="px-4 py-1.5 rounded text-sm bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] font-medium focus-ring">
             Create Task
           </button>
         </div>

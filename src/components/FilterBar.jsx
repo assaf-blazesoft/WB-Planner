@@ -35,8 +35,7 @@ export default function FilterBar({ searchRef }) {
         placeholder="Search... (/)"
         value={filters.search}
         onChange={e => setFilter('search', e.target.value)}
-        className="px-2 py-1 rounded border text-xs w-40 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-        style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
+        className="input w-40"
       />
 
       <Select
@@ -56,8 +55,7 @@ export default function FilterBar({ searchRef }) {
         placeholder="Owner"
         value={filters.owner}
         onChange={e => setFilter('owner', e.target.value)}
-        className="px-2 py-1 rounded border text-xs w-24 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-        style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
+        className="input w-24"
       />
 
       <Select
@@ -75,7 +73,7 @@ export default function FilterBar({ searchRef }) {
             setFilter('week', '');
             setFilter('search', '');
           }}
-          className="px-2 py-1 rounded text-xs text-[var(--text-muted)] hover:text-red-400 transition-colors"
+          className="px-2 py-1 rounded text-xs text-[var(--text-muted)] hover:text-red-400 transition-colors focus-ring"
         >
           Clear ✕
         </button>
@@ -89,8 +87,7 @@ function Select({ value, onChange, options }) {
     <select
       value={value}
       onChange={e => onChange(e.target.value)}
-      className="px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-      style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
+      className="input"
     >
       {options.map(o => (
         <option key={o.value} value={o.value}>{o.label}</option>
