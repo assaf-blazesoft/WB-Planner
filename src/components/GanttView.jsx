@@ -209,6 +209,11 @@ export default function GanttView({ onSelectTask }) {
                     onMouseDown={e => startDrag(e, task.id, 'move')}
                     onClick={e => { e.stopPropagation(); onSelectTask(task.id); }}
                     style={{ cursor: 'grab' }}>
+                    <defs>
+                      <clipPath id={`bar-clip-${task.id}`}>
+                        <rect x={x} y={y} width={w} height={h} rx={4} />
+                      </clipPath>
+                    </defs>
                     {/* Bar background */}
                     <rect x={x} y={y} width={w} height={h} rx={4}
                       fill={color}
@@ -217,11 +222,11 @@ export default function GanttView({ onSelectTask }) {
                       strokeWidth={isConditional ? 1.5 : 0}
                       strokeDasharray={isConditional ? '4 3' : undefined}
                     />
-                    {/* Progress fill */}
+                    {/* Progress fill — clipped to bar bounds via SVG clipPath */}
                     {task.progress_percent > 0 && (
-                      <rect x={x} y={y} width={progressW} height={h} rx={4}
+                      <rect x={x} y={y} width={progressW} height={h}
                         fill={color} fillOpacity={1}
-                        clipPath={`inset(0 0 0 0 round 4px)`} />
+                        clipPath={`url(#bar-clip-${task.id})`} />
                     )}
                     {/* Label */}
                     <text x={x + 7} y={y + h / 2 + 4} fontSize={10} fill="white" style={{ pointerEvents: 'none' }}>
