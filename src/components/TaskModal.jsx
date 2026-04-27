@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/tasks';
 import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
-import { weekRangeLabel } from '../utils/dates';
+import { weekRangeLabel, formatDateFull } from '../utils/dates';
 
 const DEFAULT_FORM = {
   title: '',
@@ -12,6 +12,7 @@ const DEFAULT_FORM = {
   weeks: [1],
   progress_percent: 0,
   owner: '',
+  due_date: null,
   tags: '',
   notes: '',
 };
@@ -98,6 +99,13 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
             <label className="label">Owner</label>
             <input className="input w-full" value={form.owner} onChange={e => field('owner', e.target.value)} />
           </div>
+        </div>
+
+        <div>
+          <label className="label">Due Date</label>
+          <input type="date" className="input w-full"
+            value={form.due_date || ''}
+            onChange={e => field('due_date', e.target.value || null)} />
         </div>
 
         <div>

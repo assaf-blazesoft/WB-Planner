@@ -3,7 +3,7 @@ import { useStore } from '../store/tasks';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase, isSupabaseEnabled } from '../lib/supabase';
 import { sendEmail } from '../lib/email';
-import { weekRangeLabel } from '../utils/dates';
+import { weekRangeLabel, formatDateFull } from '../utils/dates';
 import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
 import TaskComments from './TaskComments';
 import StatusBadge from './StatusBadge';
@@ -115,6 +115,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
   const suggestion     = suggestStatus();
   const weekOptions    = Array.from({ length: project.total_weeks }, (_, i) => i + 1);
   const unassignedUsers = allUsers.filter(u => !assignees.find(a => a.id === u.id));
+  const isOverdue = form.due_date && form.status !== 'done' && new Date(form.due_date) < new Date();
 
   return (
     <div
@@ -212,6 +213,24 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
               <input className="input w-full" value={form.owner}
                 onChange={e => field('owner', e.target.value)} onBlur={handleBlur} />
             </div>
+          </div>
+        )}
+
+        {/* Due Date */}
+        {(isAdmin || form.due_date) && (
+          <div>
+            <label className="label">Due Date</label>
+            {isAdmin ? (
+              <input type="date" className="input w-full"
+                value={form.due_date || ''}
+                onChange={e => field('due_date', e.target.value || null)}
+                onBlur={handleBlur} />
+            ) : (
+              <p className="text-xs font-medium"
+                style={{ color: isOverdue ? 'var(--status-blocked)' : 'var(--text)' }}>
+                {formatDateFull(form.due_date)}{isOverdue ? ' — overdue' : ''}
+              </p>
+            )}
           </div>
         )}
 
