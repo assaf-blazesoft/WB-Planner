@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
 import { weekToStartDate, weekToEndDate, formatDate } from '../utils/dates';
 import { TRACK_COLORS } from '../lib/constants';
@@ -34,41 +34,55 @@ function GanttSkeleton({ totalWeeks }) {
     { lane: false, bw: 300, bx: 8 },
     { lane: false, bw: 140, bx: 170 },
   ];
+  const mockH = MOCK.reduce((s, r) => s + (r.lane ? LANE_H : ROW_H), 0);
+  const svgW = totalWeeks * WEEK_W;
+
   return (
     <div className="flex flex-col h-full overflow-hidden animate-pulse">
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-none border-r" style={{ width: LEFT_W, borderColor: 'var(--border)' }}>
-          <div className="border-b" style={{ height: HEADER_H, borderColor: 'var(--border)' }} />
-          {MOCK.map((r, i) => (
-            <div key={i} className="border-b flex items-center px-3"
-              style={{ height: r.lane ? LANE_H : ROW_H, borderColor: 'var(--border)',
-                background: r.lane ? 'var(--surface2)' : undefined }}>
-              <div className="h-2.5 rounded" style={{ width: r.lane ? '42%' : '72%', background: 'var(--border)' }} />
-            </div>
-          ))}
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <div className="flex border-b" style={{ height: HEADER_H, borderColor: 'var(--border)' }}>
+      <div className="flex-1 overflow-auto min-h-0">
+        {/* Header */}
+        <div className="sticky top-0 z-30 flex flex-none" style={{ height: HEADER_H, background: 'var(--surface)' }}>
+          <div className="flex-none sticky left-0 z-40 border-b"
+            style={{ width: LEFT_W, height: HEADER_H, background: 'var(--surface)', borderColor: 'var(--border)', borderRight: '1px solid var(--border)' }} />
+          <div className="flex border-b flex-none" style={{ borderColor: 'var(--border)' }}>
             {Array.from({ length: totalWeeks }, (_, i) => (
               <div key={i} className="border-r flex flex-col items-center justify-center gap-1.5 flex-none"
-                style={{ width: WEEK_W, borderColor: 'var(--border)',
-                  background: i % 2 === 0 ? 'var(--surface2)' : 'var(--surface)' }}>
+                style={{ width: WEEK_W, borderColor: 'var(--border)', background: i % 2 === 0 ? 'var(--surface2)' : 'var(--surface)' }}>
                 <div className="h-3 w-12 rounded" style={{ background: 'var(--border)' }} />
                 <div className="h-2 w-8 rounded" style={{ background: 'var(--border)' }} />
               </div>
             ))}
           </div>
-          {MOCK.map((r, i) => (
-            <div key={i} className="border-b relative"
-              style={{ height: r.lane ? LANE_H : ROW_H, borderColor: 'var(--border)',
-                background: r.lane ? 'var(--surface2)' : undefined }}>
-              {!r.lane && (
-                <div className="absolute rounded"
-                  style={{ top: 7, left: r.bx, width: r.bw, height: ROW_H - 14,
-                    background: 'var(--surface2)' }} />
-              )}
-            </div>
-          ))}
+        </div>
+        {/* Body */}
+        <div className="flex">
+          <div className="flex-none sticky left-0 z-20" style={{ width: LEFT_W, background: 'var(--surface)', borderRight: '1px solid var(--border)' }}>
+            {MOCK.map((r, i) => (
+              <div key={i} className="border-b flex items-center px-3"
+                style={{ height: r.lane ? LANE_H : ROW_H, borderColor: 'var(--border)', background: r.lane ? 'var(--surface2)' : undefined }}>
+                <div className="h-2.5 rounded" style={{ width: r.lane ? '42%' : '72%', background: 'var(--border)' }} />
+              </div>
+            ))}
+          </div>
+          <div className="flex-none">
+            <svg width={svgW} height={mockH} style={{ display: 'block' }}>
+              {MOCK.map((r, i) => {
+                const ry = MOCK.slice(0, i).reduce((s, m) => s + (m.lane ? LANE_H : ROW_H), 0);
+                const rh = r.lane ? LANE_H : ROW_H;
+                return (
+                  <g key={i}>
+                    <rect x={0} y={ry} width={svgW} height={rh}
+                      fill={r.lane ? 'var(--surface2)' : 'transparent'}
+                      stroke="var(--border)" strokeWidth={0.5} />
+                    {!r.lane && (
+                      <rect x={r.bx} y={ry + 7} width={r.bw} height={rh - 14} rx={4}
+                        fill="var(--surface2)" />
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -113,7 +127,6 @@ export default function GanttView({ onSelectTask }) {
   // Drag state
   const dragRef = useRef(null);
   const containerRef = useRef(null);
-
   const [dragPreview, setDragPreview] = useState(null);
 
   const startDrag = useCallback((e, taskId, mode) => {
@@ -121,12 +134,7 @@ export default function GanttView({ onSelectTask }) {
     e.stopPropagation();
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
-    dragRef.current = {
-      taskId,
-      mode,
-      startX: e.clientX,
-      origWeeks: [...task.weeks],
-    };
+    dragRef.current = { taskId, mode, startX: e.clientX, origWeeks: [...task.weeks] };
 
     function onMove(ev) {
       if (!dragRef.current) return;
@@ -136,14 +144,9 @@ export default function GanttView({ onSelectTask }) {
       const minW = Math.min(...origWeeks);
       const maxW = Math.max(...origWeeks);
       let newMin = minW, newMax = maxW;
-      if (mode === 'move') {
-        newMin = minW + deltaWeeks;
-        newMax = maxW + deltaWeeks;
-      } else if (mode === 'left') {
-        newMin = minW + deltaWeeks;
-      } else if (mode === 'right') {
-        newMax = maxW + deltaWeeks;
-      }
+      if (mode === 'move')       { newMin = minW + deltaWeeks; newMax = maxW + deltaWeeks; }
+      else if (mode === 'left')  { newMin = minW + deltaWeeks; }
+      else if (mode === 'right') { newMax = maxW + deltaWeeks; }
       newMin = Math.max(1, newMin);
       newMax = Math.max(newMin, Math.min(totalWeeks, newMax));
       const newWeeks = Array.from({ length: newMax - newMin + 1 }, (_, i) => newMin + i);
@@ -212,101 +215,116 @@ export default function GanttView({ onSelectTask }) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex flex-1 overflow-auto" ref={containerRef}>
-        {/* Left label column */}
-        <div className="flex-none sticky left-0 z-20" style={{ width: LEFT_W, background: 'var(--surface)', borderRight: '1px solid var(--border)' }}>
-          {/* Header spacer */}
-          <div className="border-b flex items-end px-3 pb-2" style={{ height: HEADER_H, borderColor: 'var(--border)' }}>
+
+      {/* ── Single scroll container ─────────────────────────────────
+          One overflow-auto here handles ALL scroll (horizontal + vertical).
+          Sidebar uses sticky left-0 so it stays pinned on H-scroll.
+          Header row uses sticky top-0 so it stays pinned on V-scroll.
+          No independent overflow on the SVG div — bars and sidebar rows
+          share the same scroll context, keeping them permanently aligned. */}
+      <div className="flex-1 overflow-auto min-h-0" ref={containerRef}>
+
+        {/* Sticky header: "Tasks" label + week column labels */}
+        <div className="sticky top-0 z-30 flex flex-none"
+          style={{ height: HEADER_H, background: 'var(--surface)' }}>
+          <div className="flex-none sticky left-0 z-40 flex items-end px-3 pb-2 border-b"
+            style={{ width: LEFT_W, height: HEADER_H, background: 'var(--surface)', borderColor: 'var(--border)', borderRight: '1px solid var(--border)' }}>
             <span className="text-xs font-semibold text-[var(--text-muted)]">Tasks</span>
           </div>
-          {rows.map((row, i) => {
-            if (row.type === 'lane') {
-              return (
-                <div key={`lane-${row.track.id}`}
-                  className="flex items-center px-3 font-semibold text-xs border-b"
-                  style={{ height: LANE_H, background: row.track.color + '22', borderColor: 'var(--border)', color: row.track.color }}>
-                  {row.track.name}
-                </div>
-              );
-            }
-            const startWk = Math.min(...row.task.weeks);
-            return (
-              <div key={row.task.id}
-                className="flex items-center gap-2 px-3 border-b cursor-pointer hover:bg-[var(--surface2)] transition-colors"
-                style={{ height: ROW_H, borderColor: 'var(--border)', color: 'var(--text)' }}
-                onClick={() => onSelectTask(row.task.id)}
-              >
-                <span className="flex-none text-[10px] font-bold px-1 py-0.5 rounded"
-                  style={{ background: row.track.color + '22', color: row.track.color, minWidth: 24, textAlign: 'center' }}>
-                  W{startWk}
-                </span>
-                <span className="text-xs truncate">{row.task.title}</span>
-              </div>
-            );
-          })}
+          <div className="flex-none border-b" style={{ borderColor: 'var(--border)' }}>
+            <svg width={svgWidth} height={HEADER_H} style={{ display: 'block' }}>
+              {Array.from({ length: totalWeeks }, (_, i) => {
+                const w = i + 1;
+                const x = i * WEEK_W;
+                const startD = weekToStartDate(project.start_date, w);
+                const endD   = weekToEndDate(project.start_date, w);
+                const isEven = i % 2 === 0;
+                return (
+                  <g key={w}>
+                    <title>{`Week ${w}: ${formatDate(startD)} – ${formatDate(endD)}`}</title>
+                    <rect x={x} y={0} width={WEEK_W} height={HEADER_H}
+                      fill={isEven ? 'var(--surface2)' : 'var(--surface)'}
+                      stroke="var(--border)" strokeWidth={0.5} />
+                    <text x={x + WEEK_W / 2} y={22} textAnchor="middle"
+                      fill="var(--text)" fontSize={15} fontWeight="700">
+                      Week {w}
+                    </text>
+                    <text x={x + WEEK_W / 2} y={40} textAnchor="middle"
+                      fill="var(--text-muted)" fontSize={11}>
+                      {formatDate(startD)} – {formatDate(endD)}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
         </div>
 
-        {/* SVG canvas */}
-        <div className="flex-1 overflow-auto">
-          <svg width={svgWidth} height={totalH + HEADER_H} style={{ display: 'block' }}>
-            {/* Week header */}
-            {Array.from({ length: totalWeeks }, (_, i) => {
-              const w = i + 1;
-              const x = i * WEEK_W;
-              const startD = weekToStartDate(project.start_date, w);
-              const endD   = weekToEndDate(project.start_date, w);
-              const isEven = i % 2 === 0;
+        {/* Body: sidebar labels + timeline bars — siblings in same flex row */}
+        <div className="flex">
+
+          {/* Left label column — sticky on the left so it doesn't scroll horizontally */}
+          <div className="flex-none sticky left-0 z-20"
+            style={{ width: LEFT_W, background: 'var(--surface)', borderRight: '1px solid var(--border)' }}>
+            {rows.map((row) => {
+              if (row.type === 'lane') {
+                return (
+                  <div key={`lane-${row.track.id}`}
+                    className="flex items-center px-3 font-semibold text-xs border-b"
+                    style={{ height: LANE_H, background: row.track.color + '22', borderColor: 'var(--border)', color: row.track.color }}>
+                    {row.track.name}
+                  </div>
+                );
+              }
+              const startWk = Math.min(...row.task.weeks);
               return (
-                <g key={w}>
-                  <title>{`Week ${w}: ${formatDate(startD)} – ${formatDate(endD)}`}</title>
-                  <rect x={x} y={0} width={WEEK_W} height={HEADER_H}
-                    fill={isEven ? 'var(--surface2)' : 'var(--surface)'}
-                    stroke="var(--border)" strokeWidth={0.5} />
-                  <text x={x + WEEK_W / 2} y={22} textAnchor="middle"
-                    fill="var(--text)" fontSize={15} fontWeight="700">
-                    Week {w}
-                  </text>
-                  <text x={x + WEEK_W / 2} y={40} textAnchor="middle"
-                    fill="var(--text-muted)" fontSize={11}>
-                    {formatDate(startD)} – {formatDate(endD)}
-                  </text>
-                </g>
+                <div key={row.task.id}
+                  className="flex items-center gap-2 px-3 border-b cursor-pointer hover:bg-[var(--surface2)] transition-colors"
+                  style={{ height: ROW_H, borderColor: 'var(--border)', color: 'var(--text)' }}
+                  onClick={() => onSelectTask(row.task.id)}>
+                  <span className="flex-none text-[10px] font-bold px-1 py-0.5 rounded"
+                    style={{ background: row.track.color + '22', color: row.track.color, minWidth: 24, textAlign: 'center' }}>
+                    W{startWk}
+                  </span>
+                  <span className="text-xs truncate">{row.task.title}</span>
+                </div>
               );
             })}
+          </div>
 
-            {/* Grid body */}
-            <g transform={`translate(0,${HEADER_H})`}>
-              {/* Column stripes — stronger alternating bands */}
+          {/* Timeline body SVG — no header here, that lives in the sticky row above */}
+          <div className="flex-none">
+            <svg width={svgWidth} height={totalH} style={{ display: 'block' }}>
+
+              {/* Column stripes */}
               {Array.from({ length: totalWeeks }, (_, i) => (
                 <rect key={i} x={i * WEEK_W} y={0} width={WEEK_W} height={totalH}
                   fill={i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.045)'}
                   stroke="var(--border)" strokeWidth={1} />
               ))}
 
-              {/* Row backgrounds */}
+              {/* Lane (track header) row backgrounds */}
               {rows.map(row => {
-                if (row.type === 'lane') {
-                  return (
-                    <rect key={`bg-lane-${row.track.id}`} x={0} y={row.y} width={svgWidth} height={LANE_H}
-                      fill={row.track.color + '11'} />
-                  );
-                }
-                return null;
+                if (row.type !== 'lane') return null;
+                return (
+                  <rect key={`bg-lane-${row.track.id}`} x={0} y={row.y} width={svgWidth} height={LANE_H}
+                    fill={row.track.color + '11'} />
+                );
               })}
 
-              {/* Task bars */}
+              {/* Task bars — y = row.y (0-based from top of body, matching sidebar divs) */}
               {rows.filter(r => r.type === 'task').map(row => {
-                const { task, track } = row;
+                const { task } = row;
                 const displayWeeks = dragPreview?.taskId === task.id ? dragPreview.weeks : task.weeks;
                 const minW = Math.min(...displayWeeks);
                 const maxW = Math.max(...displayWeeks);
-                const x = (minW - 1) * WEEK_W + 4;
-                const w = (maxW - minW + 1) * WEEK_W - 8;
-                const y = row.y + 6;
-                const h = ROW_H - 12;
+                const bx = (minW - 1) * WEEK_W + 4;
+                const bw = (maxW - minW + 1) * WEEK_W - 8;
+                const by = row.y + 6;
+                const bh = ROW_H - 12;
                 const color = TRACK_COLORS[task.track] || '#888';
                 const isConditional = task.status === 'conditional';
-                const progressW = (task.progress_percent / 100) * w;
+                const progressW = (task.progress_percent / 100) * bw;
 
                 return (
                   <g key={task.id}
@@ -315,46 +333,46 @@ export default function GanttView({ onSelectTask }) {
                     style={{ cursor: 'grab' }}>
                     <defs>
                       <clipPath id={`bar-clip-${task.id}`}>
-                        <rect x={x} y={y} width={w} height={h} rx={4} />
+                        <rect x={bx} y={by} width={bw} height={bh} rx={4} />
                       </clipPath>
                     </defs>
                     {/* Bar background */}
-                    <rect x={x} y={y} width={w} height={h} rx={4}
+                    <rect x={bx} y={by} width={bw} height={bh} rx={4}
                       fill={color}
                       fillOpacity={isConditional ? 0.35 : 0.85}
                       stroke={isConditional ? 'var(--status-conditional)' : color}
                       strokeWidth={isConditional ? 1.5 : 0}
                       strokeDasharray={isConditional ? '4 3' : undefined}
                     />
-                    {/* Progress fill — clipped to bar bounds via SVG clipPath */}
+                    {/* Progress fill */}
                     {task.progress_percent > 0 && (
-                      <rect x={x} y={y} width={progressW} height={h}
+                      <rect x={bx} y={by} width={progressW} height={bh}
                         fill={color} fillOpacity={1}
                         clipPath={`url(#bar-clip-${task.id})`} />
                     )}
                     {/* Label */}
-                    <text x={x + 7} y={y + h / 2 + 4} fontSize={10} fill="white" style={{ pointerEvents: 'none' }}>
+                    <text x={bx + 7} y={by + bh / 2 + 4} fontSize={10} fill="white" style={{ pointerEvents: 'none' }}>
                       <tspan>{task.title.length > 28 ? task.title.slice(0, 28) + '…' : task.title}</tspan>
                     </text>
                     {/* Progress label */}
                     {task.progress_percent > 0 && (
-                      <text x={x + w - 6} y={y + h / 2 + 4} fontSize={9} fill="white"
+                      <text x={bx + bw - 6} y={by + bh / 2 + 4} fontSize={9} fill="white"
                         textAnchor="end" style={{ pointerEvents: 'none' }}>
                         {task.progress_percent}%
                       </text>
                     )}
-                    {/* Start-week indicator — small white triangle at left edge */}
+                    {/* Start-week corner triangle */}
                     <polygon
-                      points={`${x},${y} ${x + 6},${y} ${x},${y + 6}`}
+                      points={`${bx},${by} ${bx + 6},${by} ${bx},${by + 6}`}
                       fill="rgba(255,255,255,0.5)"
                       style={{ pointerEvents: 'none' }}
                     />
                     {/* Left resize handle */}
-                    <rect x={x} y={y} width={HANDLE_W} height={h} rx={4}
+                    <rect x={bx} y={by} width={HANDLE_W} height={bh} rx={4}
                       fill="transparent" style={{ cursor: 'ew-resize' }}
                       onMouseDown={e => startDrag(e, task.id, 'left')} />
                     {/* Right resize handle */}
-                    <rect x={x + w - HANDLE_W} y={y} width={HANDLE_W} height={h} rx={4}
+                    <rect x={bx + bw - HANDLE_W} y={by} width={HANDLE_W} height={bh} rx={4}
                       fill="transparent" style={{ cursor: 'ew-resize' }}
                       onMouseDown={e => startDrag(e, task.id, 'right')} />
                   </g>
@@ -372,8 +390,10 @@ export default function GanttView({ onSelectTask }) {
                   </text>
                 </g>
               )}
-            </g>
-          </svg>
+
+            </svg>
+          </div>
+
         </div>
       </div>
 
