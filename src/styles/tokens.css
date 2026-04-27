@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Dark is the default (applied to :root) */
+  :root, .dark {
+    --bg:         #0f1117;
+    --surface:    #1a1d27;
+    --surface2:   #222636;
+    --border:     #2d3148;
+    --text:       #f1f5f9;
+    --text-muted: #94a3b8;
+    --ring:       #7F77DD;
+  }
+
+  /* Light theme opt-in */
+  .light {
+    --bg:         #f9fafb;
+    --surface:    #ffffff;
+    --surface2:   #f3f4f6;
+    --border:     #e5e7eb;
+    --text:       #111827;
+    --text-muted: #6b7280;
+    --ring:       #7F77DD;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  * { border-color: var(--border); }
+
+  ::-webkit-scrollbar        { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track  { background: var(--bg); }
+  ::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 3px; }
+}
+
+@layer components {
+  .input {
+    @apply px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[#7F77DD];
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  .label {
+    @apply block text-xs font-medium mb-1;
+    color: var(--text-muted);
+  }
+
+  .th {
+    @apply px-3 py-2 text-left text-xs font-semibold border-b;
+    color: var(--text-muted);
+    border-color: var(--border);
+  }
+
+  .td {
+    @apply px-3 py-2 text-xs;
+    color: var(--text);
+  }
+
+  .btn-sm {
+    @apply px-2 py-1 rounded text-xs transition-colors;
+  }
+}
