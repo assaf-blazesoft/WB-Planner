@@ -23,7 +23,7 @@ export default function App() {
   const redo          = useStore(s => s.redo);
   const duplicateTask = useStore(s => s.duplicateTask);
   const deleteTask    = useStore(s => s.deleteTask);
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   const [showModal, setShowModal] = useState(false);
   const [detailId,  setDetailId]  = useState(null);
@@ -34,10 +34,15 @@ export default function App() {
     document.documentElement.classList.toggle('light', !darkMode);
   }, [darkMode]);
 
-  // Load tasks once auth is ready
+  // Load tasks whenever the authenticated user becomes available.
+  // Depending on `user` (not `loading`) ensures we retry after a token
+  // refresh: if the initial getSession() returns null (expired token) and
+  // onAuthStateChange fires later with the refreshed session, `user` changes
+  // from null → session.user and tasks are loaded correctly without a manual
+  // page refresh.
   useEffect(() => {
-    if (!loading) loadTasks();
-  }, [loading]);
+    if (user) loadTasks();
+  }, [user]);
 
   // Keyboard shortcuts
   useEffect(() => {
