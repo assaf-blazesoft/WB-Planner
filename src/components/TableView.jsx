@@ -22,6 +22,8 @@ export default function TableView({ onSelectTask }) {
   const importTasks = useStore(s => s.importTasks);
   const project = useStore(s => s.project);
   const tasksLoading = useStore(s => s.tasksLoading);
+  const totalTasks = useStore(s => s.tasks.length);
+  const clearFilters = useStore(s => s.clearFilters);
 
   const [sortKey, setSortKey] = useState('title');
   const [sortDir, setSortDir] = useState('asc');
@@ -151,8 +153,30 @@ export default function TableView({ onSelectTask }) {
             ))}
             {!tasksLoading && sorted.length === 0 && (
               <tr>
-                <td colSpan={COLUMNS.length + 2} className="text-center py-12 text-[var(--text-muted)]">
-                  No tasks match the current filters.
+                <td colSpan={COLUMNS.length + 2} className="py-16">
+                  <div className="flex flex-col items-center gap-4 text-center px-8">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
+                      stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                      <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" />
+                    </svg>
+                    <div>
+                      <p className="font-semibold text-sm" style={{ color: 'var(--text)' }}>
+                        {totalTasks > 0 ? 'No tasks match your filters' : 'No tasks yet'}
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+                        {totalTasks > 0
+                          ? 'Try adjusting or clearing the active filters.'
+                          : 'Create your first task using the + button above.'}
+                      </p>
+                    </div>
+                    {totalTasks > 0 && (
+                      <button onClick={clearFilters}
+                        className="btn-sm bg-[var(--accent)] text-white text-xs px-4 py-1.5">
+                        Clear Filters
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             )}

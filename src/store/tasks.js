@@ -68,6 +68,7 @@ export const useStore = create(
       setActiveView(view) { set({ activeView: view }); },
       setDarkMode(val)   { set({ darkMode: val }); },
       setFilter(key, val) { set(s => ({ filters: { ...s.filters, [key]: val } })); },
+      clearFilters() { set({ filters: { track: '', status: '', owner: '', week: '', search: '' } }); },
       setSelectedTaskId(id) { set({ selectedTaskId: id }); },
 
       addTask(task) {

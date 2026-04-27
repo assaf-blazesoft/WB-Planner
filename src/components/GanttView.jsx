@@ -80,6 +80,8 @@ export default function GanttView({ onSelectTask }) {
   const project = useStore(s => s.project);
   const updateTask = useStore(s => s.updateTask);
   const tasksLoading = useStore(s => s.tasksLoading);
+  const totalTasks = useStore(s => s.tasks.length);
+  const clearFilters = useStore(s => s.clearFilters);
 
   const totalWeeks = project.total_weeks;
   const svgWidth = totalWeeks * WEEK_W;
@@ -164,6 +166,49 @@ export default function GanttView({ onSelectTask }) {
   }, [tasks, totalWeeks, updateTask]);
 
   if (tasksLoading) return <GanttSkeleton totalWeeks={totalWeeks} />;
+
+  if (tasks.length === 0) {
+    const isFiltered = totalTasks > 0;
+    return (
+      <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+            <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" />
+          </svg>
+          <div>
+            <p className="font-semibold text-sm" style={{ color: 'var(--text)' }}>
+              {isFiltered ? 'No tasks match your filters' : 'No tasks yet'}
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+              {isFiltered
+                ? 'Try adjusting or clearing the active filters.'
+                : 'Create your first task using the + button above.'}
+            </p>
+          </div>
+          {isFiltered && (
+            <button onClick={clearFilters}
+              className="btn-sm bg-[var(--accent)] text-white text-xs px-4 py-1.5">
+              Clear Filters
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-4 px-4 py-2 border-t text-xs text-[var(--text-muted)]"
+          style={{ borderColor: 'var(--border)', background: 'var(--surface2)' }}>
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded" style={{ background: '#EF9F27', border: '1.5px dashed #EF9F27' }} />
+            Conditional
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-1 rounded" style={{ background: '#ef4444' }} />
+            Today
+          </span>
+          <span>Drag bars to move · Drag edges to resize</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
