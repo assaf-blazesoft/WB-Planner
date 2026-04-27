@@ -58,6 +58,7 @@ create table if not exists public.tasks (
   progress_percent integer not null default 0
                      check (progress_percent >= 0 and progress_percent <= 100),
   owner            text default '',
+  due_date         date,
   notes            text default '',
   tags             text[] default '{}',
   dependencies     text[] default '{}',

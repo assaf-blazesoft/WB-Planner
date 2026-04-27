@@ -114,7 +114,7 @@ export default function AdminPanel() {
           </button>
         </form>
         {message && (
-          <p className="text-xs" style={{ color: message.startsWith('Invite sent') ? '#22c55e' : '#ef4444' }}>
+          <p className="text-xs" style={{ color: message.startsWith('Invite sent') ? 'var(--status-done)' : 'var(--status-blocked)' }}>
             {message}
           </p>
         )}
@@ -173,8 +173,8 @@ export default function AdminPanel() {
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
                   style={{
-                    background: u.role === 'owner' ? 'color-mix(in srgb, var(--accent) 13%, transparent)' : u.role === 'admin' ? '#378ADD22' : 'var(--surface2)',
-                    color: u.role === 'owner' ? 'var(--accent)' : u.role === 'admin' ? '#378ADD' : 'var(--text-muted)',
+                    background: u.role === 'owner' ? 'color-mix(in srgb, var(--accent) 13%, transparent)' : u.role === 'admin' ? 'color-mix(in srgb, var(--status-in-progress) 13%, transparent)' : 'var(--surface2)',
+                    color: u.role === 'owner' ? 'var(--accent)' : u.role === 'admin' ? 'var(--status-in-progress)' : 'var(--text-muted)',
                   }}>
                   {u.role}
                 </span>

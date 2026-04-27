@@ -197,11 +197,11 @@ export default function GanttView({ onSelectTask }) {
         <div className="flex items-center gap-4 px-4 py-2 border-t text-xs text-[var(--text-muted)]"
           style={{ borderColor: 'var(--border)', background: 'var(--surface2)' }}>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded" style={{ background: '#EF9F27', border: '1.5px dashed #EF9F27' }} />
+            <span className="w-3 h-3 rounded" style={{ background: 'var(--status-conditional)', border: '1.5px dashed var(--status-conditional)' }} />
             Conditional
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-1 rounded" style={{ background: '#ef4444' }} />
+            <span className="w-3 h-1 rounded" style={{ background: 'var(--status-blocked)' }} />
             Today
           </span>
           <span>Drag bars to move · Drag edges to resize</span>
@@ -322,7 +322,7 @@ export default function GanttView({ onSelectTask }) {
                     <rect x={x} y={y} width={w} height={h} rx={4}
                       fill={color}
                       fillOpacity={isConditional ? 0.35 : 0.85}
-                      stroke={isConditional ? '#EF9F27' : color}
+                      stroke={isConditional ? 'var(--status-conditional)' : color}
                       strokeWidth={isConditional ? 1.5 : 0}
                       strokeDasharray={isConditional ? '4 3' : undefined}
                     />
@@ -365,8 +365,8 @@ export default function GanttView({ onSelectTask }) {
               {todayX !== null && (
                 <g>
                   <line x1={todayX} y1={0} x2={todayX} y2={totalH}
-                    stroke="#ef4444" strokeWidth={1.5} strokeDasharray="4 3" />
-                  <rect x={todayX - 16} y={0} width={32} height={16} rx={3} fill="#ef4444" />
+                    stroke="var(--status-blocked)" strokeWidth={1.5} strokeDasharray="4 3" />
+                  <rect x={todayX - 16} y={0} width={32} height={16} rx={3} fill="var(--status-blocked)" />
                   <text x={todayX} y={11} textAnchor="middle" fontSize={9} fill="white" fontWeight="bold">
                     TODAY
                   </text>

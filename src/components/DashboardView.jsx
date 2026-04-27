@@ -66,8 +66,8 @@ export default function DashboardView({ onSelectTask }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Total Tasks" value={total} />
         <StatCard label="Avg Progress" value={`${avgProgress}%`} color="var(--accent)" />
-        <StatCard label="Done" value={doneCount} color="#22c55e" />
-        <StatCard label="Blocked" value={blockedCount} color="#ef4444" />
+        <StatCard label="Done" value={doneCount} color="var(--status-done)" />
+        <StatCard label="Blocked" value={blockedCount} color="var(--status-blocked)" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
