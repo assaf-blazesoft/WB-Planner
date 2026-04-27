@@ -21,6 +21,7 @@ export default function TableView({ onSelectTask }) {
   const deleteTask = useStore(s => s.deleteTask);
   const importTasks = useStore(s => s.importTasks);
   const project = useStore(s => s.project);
+  const tasksLoading = useStore(s => s.tasksLoading);
 
   const [sortKey, setSortKey] = useState('title');
   const [sortDir, setSortDir] = useState('asc');
@@ -136,14 +137,26 @@ export default function TableView({ onSelectTask }) {
             </tr>
           </thead>
           <tbody>
-            {sorted.length === 0 && (
+            {tasksLoading && Array.from({ length: 7 }, (_, i) => (
+              <tr key={i} className="border-b animate-pulse" style={{ borderColor: 'var(--border)' }}>
+                <td className="td"><div className="w-4 h-4 rounded bg-[var(--surface2)]" /></td>
+                {COLUMNS.map(col => (
+                  <td key={col.key} className="td">
+                    <div className="h-3 rounded bg-[var(--surface2)]"
+                      style={{ width: col.key === 'title' ? '75%' : col.key === 'weeks' ? '55%' : '45%' }} />
+                  </td>
+                ))}
+                <td className="td" />
+              </tr>
+            ))}
+            {!tasksLoading && sorted.length === 0 && (
               <tr>
                 <td colSpan={COLUMNS.length + 2} className="text-center py-12 text-[var(--text-muted)]">
                   No tasks match the current filters.
                 </td>
               </tr>
             )}
-            {sorted.map(task => (
+            {!tasksLoading && sorted.map(task => (
               <tr key={task.id} className="border-b hover:bg-[var(--surface2)] transition-colors group"
                 style={{ borderColor: 'var(--border)' }}>
                 <td className="td text-center">

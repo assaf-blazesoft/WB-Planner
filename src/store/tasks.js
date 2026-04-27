@@ -49,6 +49,7 @@ export const useStore = create(
     (set, get) => ({
       project: PROJECT_CONFIG,
       tasks: [],
+      tasksLoading: false,
       filters: { track: '', status: '', owner: '', week: '', search: '' },
       activeView: 'gantt',
       darkMode: true,
@@ -58,8 +59,10 @@ export const useStore = create(
 
       async loadTasks() {
         if (!isSupabaseEnabled) return;
+        set({ tasksLoading: true });
         const { data, error } = await supabase.from('tasks').select('*');
         if (!error && data) set({ tasks: data, history: [], future: [] });
+        set({ tasksLoading: false });
       },
 
       setActiveView(view) { set({ activeView: view }); },

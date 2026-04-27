@@ -21,10 +21,65 @@ function todayOffset(projectStartDate, totalWeeks) {
   return elapsed * WEEK_W;
 }
 
+function GanttSkeleton({ totalWeeks }) {
+  const MOCK = [
+    { lane: true },
+    { lane: false, bw: 220, bx: 8 },
+    { lane: false, bw: 170, bx: 175 },
+    { lane: true },
+    { lane: false, bw: 350, bx: 8 },
+    { lane: false, bw: 160, bx: 190 },
+    { lane: false, bw: 200, bx: 100 },
+    { lane: true },
+    { lane: false, bw: 300, bx: 8 },
+    { lane: false, bw: 140, bx: 170 },
+  ];
+  return (
+    <div className="flex flex-col h-full overflow-hidden animate-pulse">
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-none border-r" style={{ width: LEFT_W, borderColor: 'var(--border)' }}>
+          <div className="border-b" style={{ height: HEADER_H, borderColor: 'var(--border)' }} />
+          {MOCK.map((r, i) => (
+            <div key={i} className="border-b flex items-center px-3"
+              style={{ height: r.lane ? LANE_H : ROW_H, borderColor: 'var(--border)',
+                background: r.lane ? 'var(--surface2)' : undefined }}>
+              <div className="h-2.5 rounded" style={{ width: r.lane ? '42%' : '72%', background: 'var(--border)' }} />
+            </div>
+          ))}
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <div className="flex border-b" style={{ height: HEADER_H, borderColor: 'var(--border)' }}>
+            {Array.from({ length: totalWeeks }, (_, i) => (
+              <div key={i} className="border-r flex flex-col items-center justify-center gap-1.5 flex-none"
+                style={{ width: WEEK_W, borderColor: 'var(--border)',
+                  background: i % 2 === 0 ? 'var(--surface2)' : 'var(--surface)' }}>
+                <div className="h-3 w-12 rounded" style={{ background: 'var(--border)' }} />
+                <div className="h-2 w-8 rounded" style={{ background: 'var(--border)' }} />
+              </div>
+            ))}
+          </div>
+          {MOCK.map((r, i) => (
+            <div key={i} className="border-b relative"
+              style={{ height: r.lane ? LANE_H : ROW_H, borderColor: 'var(--border)',
+                background: r.lane ? 'var(--surface2)' : undefined }}>
+              {!r.lane && (
+                <div className="absolute rounded"
+                  style={{ top: 7, left: r.bx, width: r.bw, height: ROW_H - 14,
+                    background: 'var(--surface2)' }} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GanttView({ onSelectTask }) {
   const tasks = useFilteredTasks();
   const project = useStore(s => s.project);
   const updateTask = useStore(s => s.updateTask);
+  const tasksLoading = useStore(s => s.tasksLoading);
 
   const totalWeeks = project.total_weeks;
   const svgWidth = totalWeeks * WEEK_W;
@@ -107,6 +162,8 @@ export default function GanttView({ onSelectTask }) {
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   }, [tasks, totalWeeks, updateTask]);
+
+  if (tasksLoading) return <GanttSkeleton totalWeeks={totalWeeks} />;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
