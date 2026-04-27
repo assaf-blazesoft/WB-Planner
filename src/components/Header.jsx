@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/tasks';
 import { useAuth } from '../contexts/AuthContext';
@@ -44,7 +44,7 @@ export default function Header({ onNewTask }) {
                 onClick={() => setActiveView(v.id)}
                 className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                   activeView === v.id
-                    ? 'bg-[#7F77DD] text-white'
+                    ? 'bg-[var(--accent)] text-white'
                     : 'hover:bg-[var(--surface2)] text-[var(--text-muted)]'
                 }`}
               >
@@ -60,7 +60,7 @@ export default function Header({ onNewTask }) {
         {!isAdminPage && isAdmin && (
           <button
             onClick={() => onNewTask()}
-            className="px-3 py-1 rounded text-xs font-medium bg-[#7F77DD] text-white hover:bg-[#6b63cc] transition-colors"
+            className="px-3 py-1 rounded text-xs font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors"
           >
             + New task
           </button>
@@ -87,7 +87,7 @@ export default function Header({ onNewTask }) {
 
         {profile && (
           <div className="flex items-center gap-2 pl-2 border-l" style={{ borderColor: 'var(--border)' }}>
-            <div className="w-6 h-6 rounded-full bg-[#7F77DD]/20 flex items-center justify-center text-[#7F77DD] text-xs font-bold">
+            <div className="w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] text-xs font-bold">
               {(profile.full_name || profile.email || '?')[0].toUpperCase()}
             </div>
             <button

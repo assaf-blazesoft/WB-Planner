@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend,
@@ -65,7 +65,7 @@ export default function DashboardView({ onSelectTask }) {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Total Tasks" value={total} />
-        <StatCard label="Avg Progress" value={`${avgProgress}%`} color="#7F77DD" />
+        <StatCard label="Avg Progress" value={`${avgProgress}%`} color="var(--accent)" />
         <StatCard label="Done" value={doneCount} color="#22c55e" />
         <StatCard label="Blocked" value={blockedCount} color="#ef4444" />
       </div>
@@ -111,7 +111,7 @@ export default function DashboardView({ onSelectTask }) {
               <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
               <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: 12 }} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Line type="monotone" dataKey="actual" stroke="#7F77DD" strokeWidth={2} dot={{ r: 3 }} name="Actual %" />
+              <Line type="monotone" dataKey="actual" stroke="var(--accent)" strokeWidth={2} dot={{ r: 3 }} name="Actual %" />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>

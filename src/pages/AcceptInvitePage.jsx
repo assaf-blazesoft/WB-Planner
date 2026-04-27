@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -63,7 +63,7 @@ export default function AcceptInvitePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-        <div className="w-5 h-5 border-2 border-[#7F77DD] border-t-transparent rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -128,7 +128,7 @@ export default function AcceptInvitePage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-2 rounded text-sm font-medium bg-[#7F77DD] text-white hover:bg-[#6b63cc] disabled:opacity-50 transition-colors"
+            className="w-full py-2 rounded text-sm font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-colors"
           >
             {saving ? 'Creating account…' : 'Create account'}
           </button>

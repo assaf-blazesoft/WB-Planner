@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/tasks';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase, isSupabaseEnabled } from '../lib/supabase';
@@ -228,7 +228,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
                       updateTask(taskId, { ...form, weeks });
                     }}
                     className={`w-8 h-8 rounded text-xs font-medium transition-colors ${
-                      active ? 'bg-[#7F77DD] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'
+                      active ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'
                     }`}
                   >
                     {w}
@@ -258,7 +258,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
             </div>
           </div>
           <div className="mt-1 h-1.5 rounded-full bg-[var(--surface2)] overflow-hidden">
-            <div className="h-full rounded-full transition-all" style={{ width: `${form.progress_percent}%`, background: '#7F77DD' }} />
+            <div className="h-full rounded-full transition-all" style={{ width: `${form.progress_percent}%`, background: 'var(--accent)' }} />
           </div>
         </div>
 

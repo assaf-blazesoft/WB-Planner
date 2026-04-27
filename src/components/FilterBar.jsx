@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+﻿import React, { useRef } from 'react';
 import { useStore } from '../store/tasks';
 import { STATUSES as BASE_STATUSES, PRIORITIES as BASE_PRIORITIES } from '../lib/constants';
 
@@ -35,7 +35,7 @@ export default function FilterBar({ searchRef }) {
         placeholder="Search... (/)"
         value={filters.search}
         onChange={e => setFilter('search', e.target.value)}
-        className="px-2 py-1 rounded border text-xs w-40 focus:outline-none focus:ring-1 focus:ring-[#7F77DD]"
+        className="px-2 py-1 rounded border text-xs w-40 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
         style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
       />
 
@@ -56,7 +56,7 @@ export default function FilterBar({ searchRef }) {
         placeholder="Owner"
         value={filters.owner}
         onChange={e => setFilter('owner', e.target.value)}
-        className="px-2 py-1 rounded border text-xs w-24 focus:outline-none focus:ring-1 focus:ring-[#7F77DD]"
+        className="px-2 py-1 rounded border text-xs w-24 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
         style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
       />
 
@@ -89,7 +89,7 @@ function Select({ value, onChange, options }) {
     <select
       value={value}
       onChange={e => onChange(e.target.value)}
-      className="px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[#7F77DD]"
+      className="px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
       style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
     >
       {options.map(o => (

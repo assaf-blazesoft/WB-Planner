@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
 import { weekRangeLabel } from '../utils/dates';
 import { downloadCSV, downloadJSON, csvToTasks } from '../utils/csv';
@@ -106,7 +106,7 @@ export default function TableView({ onSelectTask }) {
                 onChange={e => setBulkOwner(e.target.value)}
                 className="input w-28"
               />
-              <button onClick={applyBulkOwner} className="btn-sm bg-[#7F77DD] text-white">Apply</button>
+              <button onClick={applyBulkOwner} className="btn-sm bg-[var(--accent)] text-white">Apply</button>
               <button onClick={deleteSelected} className="btn-sm text-red-400 hover:bg-red-500/10">Delete</button>
             </>
           )}
@@ -165,7 +165,7 @@ export default function TableView({ onSelectTask }) {
                 ))}
                 <td className="td">
                   <button onClick={() => onSelectTask(task.id)}
-                    className="px-2 py-0.5 rounded text-xs text-[#7F77DD] hover:bg-[#7F77DD]/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    className="px-2 py-0.5 rounded text-xs text-[var(--accent)] hover:bg-[var(--accent)]/10 opacity-0 group-hover:opacity-100 transition-opacity">
                     Open
                   </button>
                 </td>
@@ -190,7 +190,7 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
     return (
       <div className="flex items-center gap-1.5">
         <div className="w-16 h-1.5 rounded-full bg-[var(--surface2)] overflow-hidden">
-          <div className="h-full rounded-full" style={{ width: `${task.progress_percent}%`, background: '#7F77DD' }} />
+          <div className="h-full rounded-full" style={{ width: `${task.progress_percent}%`, background: 'var(--accent)' }} />
         </div>
         <span className="text-[var(--text-muted)]">{task.progress_percent}%</span>
       </div>

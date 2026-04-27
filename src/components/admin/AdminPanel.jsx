@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { supabase, isSupabaseEnabled } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendEmail } from '../../lib/email';
@@ -108,7 +108,7 @@ export default function AdminPanel() {
           <button
             type="submit"
             disabled={sending}
-            className="px-4 py-1 rounded text-xs font-medium bg-[#7F77DD] text-white hover:bg-[#6b63cc] disabled:opacity-50 transition-colors"
+            className="px-4 py-1 rounded text-xs font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-colors"
           >
             {sending ? 'Sending…' : 'Send invite'}
           </button>
@@ -163,7 +163,7 @@ export default function AdminPanel() {
             {users.map(u => (
               <div key={u.id} className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#7F77DD]/20 flex items-center justify-center text-[#7F77DD] font-bold text-xs">
+                  <div className="w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] font-bold text-xs">
                     {(u.full_name || u.email)[0].toUpperCase()}
                   </div>
                   <div>
@@ -173,8 +173,8 @@ export default function AdminPanel() {
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
                   style={{
-                    background: u.role === 'owner' ? '#7F77DD22' : u.role === 'admin' ? '#378ADD22' : 'var(--surface2)',
-                    color: u.role === 'owner' ? '#7F77DD' : u.role === 'admin' ? '#378ADD' : 'var(--text-muted)',
+                    background: u.role === 'owner' ? 'color-mix(in srgb, var(--accent) 13%, transparent)' : u.role === 'admin' ? '#378ADD22' : 'var(--surface2)',
+                    color: u.role === 'owner' ? 'var(--accent)' : u.role === 'admin' ? '#378ADD' : 'var(--text-muted)',
                   }}>
                   {u.role}
                 </span>

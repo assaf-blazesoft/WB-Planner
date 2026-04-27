@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/tasks';
 import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
 
@@ -113,7 +113,7 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
                     const next = active ? current.filter(x => x !== w) : [...current, w].sort((a,b) => a-b);
                     setWeekStr(next.join(', '));
                   }}
-                  className={`w-8 h-8 rounded text-xs font-medium transition-colors ${active ? 'bg-[#7F77DD] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'}`}
+                  className={`w-8 h-8 rounded text-xs font-medium transition-colors ${active ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface2)] text-[var(--text-muted)]'}`}
                 >
                   {w}
                 </button>
@@ -138,7 +138,7 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
             Cancel
           </button>
           <button type="submit"
-            className="px-4 py-1.5 rounded text-sm bg-[#7F77DD] text-white hover:bg-[#6b63cc] font-medium">
+            className="px-4 py-1.5 rounded text-sm bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] font-medium">
             Create Task
           </button>
         </div>

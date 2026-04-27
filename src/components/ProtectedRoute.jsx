@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { isSupabaseEnabled } from '../lib/supabase';
@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center" style={{ background: 'var(--bg)' }}>
-        <div className="w-5 h-5 border-2 border-[#7F77DD] border-t-transparent rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

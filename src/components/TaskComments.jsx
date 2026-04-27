@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { supabase, isSupabaseEnabled } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { sendEmail } from '../lib/email';
@@ -73,7 +73,7 @@ export default function TaskComments({ taskId, taskTitle }) {
         <div className="space-y-3 max-h-48 overflow-y-auto">
           {comments.map(c => (
             <div key={c.id} className="flex gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#7F77DD]/20 flex items-center justify-center flex-none text-xs text-[#7F77DD] font-bold">
+              <div className="w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center flex-none text-xs text-[var(--accent)] font-bold">
                 {(c.profiles?.full_name || '?')[0].toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -102,7 +102,7 @@ export default function TaskComments({ taskId, taskTitle }) {
         <button
           type="submit"
           disabled={saving || !text.trim()}
-          className="px-3 py-1 rounded text-xs bg-[#7F77DD] text-white disabled:opacity-40 hover:bg-[#6b63cc] transition-colors"
+          className="px-3 py-1 rounded text-xs bg-[var(--accent)] text-white disabled:opacity-40 hover:bg-[var(--accent-hover)] transition-colors"
         >
           Post
         </button>

@@ -12,6 +12,8 @@
     --text:       #f1f5f9;
     --text-muted: #a0aec0;
     --ring:       #7F77DD;
+    --accent:     #7F77DD;
+    --accent-hover: #6b63cc;
   }
 
   /* Light theme opt-in */
@@ -23,6 +25,8 @@
     --text:       #111827;
     --text-muted: #6b7280;
     --ring:       #7F77DD;
+    --accent:     #7F77DD;
+    --accent-hover: #6b63cc;
   }
 
   body {
@@ -41,7 +45,7 @@
 
 @layer components {
   .input {
-    @apply px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[#7F77DD];
+    @apply px-2 py-1 rounded border text-xs focus:outline-none focus:ring-1 focus:ring-[var(--accent)];
     background: var(--surface);
     border-color: var(--border);
     color: var(--text);
