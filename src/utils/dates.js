@@ -10,16 +10,6 @@ export function weekToEndDate(projectStartDate, week) {
   return end;
 }
 
-export function weeksToDateRange(projectStartDate, weeks) {
-  if (!weeks || weeks.length === 0) return { start: null, end: null };
-  const minWeek = Math.min(...weeks);
-  const maxWeek = Math.max(...weeks);
-  return {
-    start: weekToStartDate(projectStartDate, minWeek),
-    end: weekToEndDate(projectStartDate, maxWeek),
-  };
-}
-
 export function dateToWeek(projectStartDate, date) {
   const start = new Date(projectStartDate);
   const d = new Date(date);
@@ -56,10 +46,6 @@ export function weekRangeLabel(projectStartDate, weeks) {
   const max = Math.max(...weeks);
   if (min === max) return weekLabel(projectStartDate, min);
   return `Wk ${min}–${max}`;
-}
-
-export function todayWeek(projectStartDate) {
-  return dateToWeek(projectStartDate, new Date());
 }
 
 export function elapsedFraction(projectStartDate, totalWeeks) {
