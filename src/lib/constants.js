@@ -6,11 +6,11 @@ export const TRACK_COLORS = {
 };
 
 export const STATUS_COLORS = {
-  not_started: '#6b7280',
-  in_progress:  '#378ADD',
-  blocked:      '#ef4444',
-  done:         '#22c55e',
-  conditional:  '#EF9F27',
+  not_started: 'var(--status-not-started)',
+  in_progress:  'var(--status-in-progress)',
+  blocked:      'var(--status-blocked)',
+  done:         'var(--status-done)',
+  conditional:  'var(--status-conditional)',
 };
 
 export const PRIORITY_COLORS = {
