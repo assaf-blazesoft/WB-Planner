@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
+build/
+.netlify/
+.cache/
 
 # Environment — never commit real keys
 .env
