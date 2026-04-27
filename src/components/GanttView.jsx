@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
-import { weekToStartDate, formatDate } from '../utils/dates';
+import { weekToStartDate, weekToEndDate, formatDate } from '../utils/dates';
 import { TRACK_COLORS } from '../lib/constants';
 
 const WEEK_W = 160;
@@ -254,9 +254,11 @@ export default function GanttView({ onSelectTask }) {
               const w = i + 1;
               const x = i * WEEK_W;
               const startD = weekToStartDate(project.start_date, w);
+              const endD   = weekToEndDate(project.start_date, w);
               const isEven = i % 2 === 0;
               return (
                 <g key={w}>
+                  <title>{`Week ${w}: ${formatDate(startD)} – ${formatDate(endD)}`}</title>
                   <rect x={x} y={0} width={WEEK_W} height={HEADER_H}
                     fill={isEven ? 'var(--surface2)' : 'var(--surface)'}
                     stroke="var(--border)" strokeWidth={0.5} />
@@ -266,7 +268,7 @@ export default function GanttView({ onSelectTask }) {
                   </text>
                   <text x={x + WEEK_W / 2} y={40} textAnchor="middle"
                     fill="var(--text-muted)" fontSize={11}>
-                    {formatDate(startD)}
+                    {formatDate(startD)} – {formatDate(endD)}
                   </text>
                 </g>
               );

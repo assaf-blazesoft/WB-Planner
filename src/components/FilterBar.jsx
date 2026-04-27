@@ -1,6 +1,7 @@
 ﻿import React, { useRef } from 'react';
 import { useStore } from '../store/tasks';
 import { STATUSES as BASE_STATUSES, PRIORITIES as BASE_PRIORITIES } from '../lib/constants';
+import { weekToStartDate, formatDate } from '../utils/dates';
 
 const STATUSES = [{ value: '', label: 'All statuses' }, ...BASE_STATUSES];
 const PRIORITIES = [{ value: '', label: 'All priorities' }, ...BASE_PRIORITIES];
@@ -19,7 +20,7 @@ export default function FilterBar({ searchRef }) {
     { value: '', label: 'All weeks' },
     ...Array.from({ length: project.total_weeks }, (_, i) => ({
       value: String(i + 1),
-      label: `Week ${i + 1}`,
+      label: `Week ${i + 1} · ${formatDate(weekToStartDate(project.start_date, i + 1))}`,
     })),
   ];
 

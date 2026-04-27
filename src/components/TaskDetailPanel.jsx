@@ -118,7 +118,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
 
   return (
     <div
-      className="fixed top-0 right-0 h-full w-96 shadow-2xl z-40 flex flex-col overflow-hidden"
+      className="fixed top-0 right-0 h-full w-full sm:w-96 shadow-2xl z-40 flex flex-col overflow-hidden"
       style={{ background: 'var(--surface)', borderLeft: '1px solid var(--border)' }}
     >
       {/* Header */}
@@ -224,6 +224,7 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
                 const active = form.weeks.includes(w);
                 return (
                   <button key={w}
+                    title={weekRangeLabel(project.start_date, [w])}
                     onClick={() => {
                       const next = active
                         ? form.weeks.filter(x => x !== w)

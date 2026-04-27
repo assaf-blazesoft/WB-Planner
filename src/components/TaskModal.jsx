@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/tasks';
 import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
+import { weekRangeLabel } from '../utils/dates';
 
 const DEFAULT_FORM = {
   title: '',
@@ -108,6 +109,7 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
               return (
                 <button
                   key={w} type="button"
+                  title={weekRangeLabel(project.start_date, [w])}
                   onClick={() => {
                     const current = weekStr.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
                     const next = active ? current.filter(x => x !== w) : [...current, w].sort((a,b) => a-b);
