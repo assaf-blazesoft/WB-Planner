@@ -18,10 +18,11 @@ create table if not exists public.profiles (
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer as $$
 begin
-  insert into public.profiles (id, email, role)
+  insert into public.profiles (id, email, full_name, role)
   values (
     new.id,
     new.email,
+    (new.raw_user_meta_data->>'full_name'),
     case when new.email = 'assafc@blazesoft.ca' then 'owner' else 'user' end
   )
   on conflict (id) do nothing;
@@ -181,7 +182,7 @@ create policy "assignments_select_authenticated"
 
 create policy "assignments_write_admin"
   on public.task_assignments for insert
-  using (public.is_admin());
+  with check (public.is_admin());
 
 create policy "assignments_delete_admin"
   on public.task_assignments for delete
