@@ -1,8 +1,9 @@
 export const TRACK_COLORS = {
-  ops:     '#378ADD',
-  economy: '#1D9E75',
-  feature: '#7F77DD',
-  ongoing: '#888780',
+  ops:       '#378ADD',
+  economy:   '#1D9E75',
+  feature:   '#7F77DD',
+  ongoing:   '#888780',
+  marketing: '#E8654A',
 };
 
 export const STATUS_COLORS = {
@@ -20,10 +21,11 @@ export const PRIORITY_COLORS = {
 };
 
 export const TRACKS = [
-  { id: 'ops',     name: 'Operations Automation',  color: TRACK_COLORS.ops },
-  { id: 'economy', name: 'Economy Automation',      color: TRACK_COLORS.economy },
-  { id: 'feature', name: 'New Features',            color: TRACK_COLORS.feature },
-  { id: 'ongoing', name: 'Ongoing / Foundation',    color: TRACK_COLORS.ongoing },
+  { id: 'ops',       name: 'Operations Automation',  color: TRACK_COLORS.ops },
+  { id: 'economy',   name: 'Economy Automation',      color: TRACK_COLORS.economy },
+  { id: 'marketing', name: 'Marketing Automation',    color: TRACK_COLORS.marketing },
+  { id: 'feature',   name: 'New Features',            color: TRACK_COLORS.feature },
+  { id: 'ongoing',   name: 'Ongoing / Foundation',    color: TRACK_COLORS.ongoing },
 ];
 
 export const STATUSES = [

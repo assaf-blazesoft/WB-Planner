@@ -10,10 +10,11 @@ const PROJECT_CONFIG = {
   sprint_length_days: 7,
   total_weeks: 6,
   tracks: [
-    { id: 'ops',     name: 'Operations Automation', color: '#378ADD' },
-    { id: 'economy', name: 'Economy Automation',    color: '#1D9E75' },
-    { id: 'feature', name: 'New Features',          color: '#7F77DD' },
-    { id: 'ongoing', name: 'Ongoing / Foundation',  color: '#888780' },
+    { id: 'ops',       name: 'Operations Automation', color: '#378ADD' },
+    { id: 'economy',   name: 'Economy Automation',    color: '#1D9E75' },
+    { id: 'marketing', name: 'Marketing Automation',  color: '#E8654A' },
+    { id: 'feature',   name: 'New Features',          color: '#7F77DD' },
+    { id: 'ongoing',   name: 'Ongoing / Foundation',  color: '#888780' },
   ],
 };
 

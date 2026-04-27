@@ -10,7 +10,7 @@ const HEADER_H = 52;
 const LEFT_W = 220;
 const HANDLE_W = 8;
 
-const TRACK_ORDER = ['ops', 'economy', 'feature', 'ongoing'];
+const TRACK_ORDER = ['ops', 'economy', 'marketing', 'feature', 'ongoing'];
 
 function todayOffset(projectStartDate, totalWeeks) {
   const start = new Date(projectStartDate);
