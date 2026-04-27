@@ -6,6 +6,7 @@ import { sendEmail } from '../lib/email';
 import { weekRangeLabel } from '../utils/dates';
 import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
 import TaskComments from './TaskComments';
+import StatusBadge from './StatusBadge';
 
 export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
   const task         = useStore(s => s.tasks.find(t => t.id === taskId));
@@ -123,7 +124,10 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b flex-none"
         style={{ borderColor: 'var(--border)' }}>
-        <span className="font-semibold text-sm" style={{ color: 'var(--text)' }}>Task Detail</span>
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-sm" style={{ color: 'var(--text)' }}>Task Detail</span>
+          <StatusBadge status={task.status} />
+        </div>
         <div className="flex items-center gap-2">
           {isAdmin && (
             <>
@@ -183,10 +187,11 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
         </div>
 
         {suggestion && (
-          <div className="text-xs px-3 py-2 rounded bg-amber-500/10 text-amber-400 flex items-center justify-between">
-            <span>Suggest: mark as <b>{suggestion}</b>?</span>
-            <button className="underline"
-              onClick={() => handleStatusChange(suggestion)}>
+          <div className="text-xs px-3 py-2 rounded bg-amber-500/10 text-amber-400 flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2">
+              Suggest: <StatusBadge status={suggestion} />
+            </span>
+            <button className="underline shrink-0" onClick={() => handleStatusChange(suggestion)}>
               Apply
             </button>
           </div>

@@ -2,7 +2,8 @@
 import { useStore, useFilteredTasks } from '../store/tasks';
 import { weekRangeLabel } from '../utils/dates';
 import { downloadCSV, downloadJSON, csvToTasks } from '../utils/csv';
-import { STATUS_COLORS, TRACK_COLORS, PRIORITY_COLORS, STATUSES, TRACKS, PRIORITIES } from '../lib/constants';
+import { TRACK_COLORS, PRIORITY_COLORS, STATUSES, TRACKS, PRIORITIES } from '../lib/constants';
+import StatusBadge from './StatusBadge';
 
 const COLUMNS = [
   { key: 'title',           label: 'Title',      editable: true },
@@ -229,11 +230,10 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
       );
     }
     return (
-      <span className="px-1.5 py-0.5 rounded-full text-xs font-medium cursor-pointer"
-        style={{ background: STATUS_COLORS[task.status] + '22', color: STATUS_COLORS[task.status] }}
-        onClick={() => onStart(task.id, col.key, task[col.key])}>
-        {task.status.replace('_', ' ')}
-      </span>
+      <StatusBadge
+        status={task.status}
+        onClick={() => onStart(task.id, col.key, task[col.key])}
+      />
     );
   }
 
