@@ -11,8 +11,8 @@ Internal project planning tool — invite-only, Gantt + Table + Dashboard views,
 | Frontend   | React 18 + Vite + Tailwind CSS |
 | State      | Zustand (tasks sync to Supabase, UI prefs in localStorage) |
 | Auth + DB  | Supabase (Postgres + Auth) |
-| Email      | Resend via Netlify Function |
-| Hosting    | Netlify |
+| Email      | Resend (Cloudflare Worker — wiring TBD) |
+| Hosting    | Cloudflare Pages |
 
 ---
 
@@ -42,11 +42,7 @@ Fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from your Supabase proj
 npm run dev
 ```
 
-To also test email functions locally, use [netlify dev](https://docs.netlify.com/cli/get-started/) instead:
-```bash
-npm install -g netlify-cli
-netlify dev
-```
+Email sending requires a Cloudflare Worker endpoint (future work). For now, email calls silently no-op in local dev.
 
 ---
 
@@ -83,42 +79,29 @@ Open the app and sign up with `assafc@blazesoft.ca`. The trigger in `schema.sql`
 
 ---
 
-## Deployment (Netlify)
+## Deployment (Cloudflare Pages)
 
-### 1. Push to GitHub
+### 1. Connect repo
 
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/your-org/wb-roadmap.git
-git push -u origin main
-```
-
-### 2. Connect to Netlify
-
-- Go to [netlify.com](https://netlify.com) → **Add new site → Import from Git**
+- Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages → Create → Pages → Connect to Git**
 - Select your repo
 - Build command: `npm run build`
-- Publish directory: `dist`
+- Build output directory: `dist`
 
-Netlify will auto-detect `netlify.toml` — no manual config needed.
+### 2. Set environment variables
 
-### 3. Set environment variables
-
-In **Netlify → Site → Environment Variables**, add:
+In **Cloudflare Pages → Settings → Environment Variables**, add these for both **Production** and **Preview**:
 
 ```
-VITE_SUPABASE_URL        = https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY   = your-anon-key
-RESEND_API_KEY           = re_your_key
-FROM_EMAIL               = noreply@yourdomain.com
-APP_URL                  = https://your-app.netlify.app
+VITE_SUPABASE_URL      = https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY = your-anon-key
 ```
 
-### 4. Deploy
+> **Important:** These are Vite build-time variables — they get baked into the JS bundle during the build. After adding or changing them in Cloudflare, you must **Retry deployment** for the change to take effect.
 
-Trigger a deploy from the Netlify dashboard, or push to `main`.
+### 3. Deploy
+
+Push to `main` — Cloudflare Pages auto-deploys on every push. Or click **Retry deployment** in the dashboard after setting env vars.
 
 ---
 
@@ -175,9 +158,6 @@ src/
 │   └── ProtectedRoute
 ├── store/tasks.js    # Zustand store (Supabase-backed)
 └── utils/            # Date helpers, CSV import/export
-
-netlify/functions/
-└── send-email.js     # Transactional email via Resend
 
 supabase/
 └── schema.sql        # Full DB schema + RLS policies
