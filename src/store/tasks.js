@@ -2,7 +2,20 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 import { supabase, isSupabaseEnabled } from '../lib/supabase';
-import seedData from '../data/seed.json';
+
+const PROJECT_CONFIG = {
+  name: 'Winbonanza Weekly Planning',
+  description: 'Weekly sprint planning across Operations Automation, Economy Automation, and New Features',
+  start_date: '2026-04-27',
+  sprint_length_days: 7,
+  total_weeks: 6,
+  tracks: [
+    { id: 'ops',     name: 'Operations Automation', color: '#378ADD' },
+    { id: 'economy', name: 'Economy Automation',    color: '#1D9E75' },
+    { id: 'feature', name: 'New Features',          color: '#7F77DD' },
+    { id: 'ongoing', name: 'Ongoing / Foundation',  color: '#888780' },
+  ],
+};
 
 const MAX_HISTORY = 10;
 
@@ -34,7 +47,7 @@ async function syncTask(action, id, data) {
 export const useStore = create(
   persist(
     (set, get) => ({
-      project: seedData.project,
+      project: PROJECT_CONFIG,
       tasks: [],
       filters: { track: '', status: '', owner: '', week: '', search: '' },
       activeView: 'gantt',
@@ -43,18 +56,10 @@ export const useStore = create(
       history: [],
       future: [],
 
-      // Load tasks from Supabase (called after auth is ready)
       async loadTasks() {
-        if (!isSupabaseEnabled) {
-          if (get().tasks.length === 0) set({ tasks: seedData.tasks });
-          return;
-        }
+        if (!isSupabaseEnabled) return;
         const { data, error } = await supabase.from('tasks').select('*');
-        if (!error && data) {
-          set({ tasks: data, history: [], future: [] });
-        } else if (get().tasks.length === 0) {
-          set({ tasks: seedData.tasks });
-        }
+        if (!error && data) set({ tasks: data, history: [], future: [] });
       },
 
       setActiveView(view) { set({ activeView: view }); },
