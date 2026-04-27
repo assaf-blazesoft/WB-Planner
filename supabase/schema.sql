@@ -1,6 +1,7 @@
 -- ============================================================
 -- Winbonanza Planner — Supabase Schema
 -- Run this in the Supabase SQL editor (Dashboard → SQL Editor)
+-- Safe to re-run: uses IF NOT EXISTS / CREATE OR REPLACE
 -- ============================================================
 
 -- ── Profiles ─────────────────────────────────────────────────
@@ -67,6 +68,9 @@ create table if not exists public.tasks (
   updated_at       timestamptz default now()
 );
 
+-- Add due_date if the table already existed without it (migration safety)
+alter table public.tasks add column if not exists due_date date;
+
 -- Auto-update updated_at
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
@@ -132,41 +136,44 @@ returns boolean language sql security definer stable as $$
 $$;
 
 -- ── Profiles RLS ─────────────────────────────────────────────
+drop policy if exists "profiles_select_authenticated" on public.profiles;
 create policy "profiles_select_authenticated"
   on public.profiles for select
   using (auth.uid() is not null);
 
+drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own"
   on public.profiles for update
   using (id = auth.uid());
 
 -- ── Invites RLS ──────────────────────────────────────────────
+drop policy if exists "invites_all_admin" on public.invites;
 create policy "invites_all_admin"
   on public.invites for all
   using (public.is_admin());
 
--- Anyone can read their own invite token (for accept-invite page)
+drop policy if exists "invites_select_by_token" on public.invites;
 create policy "invites_select_by_token"
   on public.invites for select
   using (true);
 
 -- ── Tasks RLS ────────────────────────────────────────────────
--- Admin: full access
+-- Admin/owner: full access
+drop policy if exists "tasks_all_admin" on public.tasks;
 create policy "tasks_all_admin"
   on public.tasks for all
-  using (public.is_admin());
+  using (public.is_admin())
+  with check (public.is_admin());
 
--- Assigned users: select only
-create policy "tasks_select_assigned"
+-- All authenticated users: SELECT every task (full roadmap visibility)
+drop policy if exists "tasks_select_assigned" on public.tasks;
+drop policy if exists "tasks_select_all_authenticated" on public.tasks;
+create policy "tasks_select_all_authenticated"
   on public.tasks for select
-  using (
-    exists (
-      select 1 from public.task_assignments
-      where task_id = tasks.id and user_id = auth.uid()
-    )
-  );
+  using (auth.uid() is not null);
 
--- Assigned users: update status, progress, notes only
+-- Assigned users: UPDATE only tasks they're assigned to
+drop policy if exists "tasks_update_assigned" on public.tasks;
 create policy "tasks_update_assigned"
   on public.tasks for update
   using (
@@ -177,28 +184,42 @@ create policy "tasks_update_assigned"
   );
 
 -- ── Task Assignments RLS ─────────────────────────────────────
+drop policy if exists "assignments_select_authenticated" on public.task_assignments;
 create policy "assignments_select_authenticated"
   on public.task_assignments for select
   using (auth.uid() is not null);
 
+drop policy if exists "assignments_write_admin" on public.task_assignments;
 create policy "assignments_write_admin"
   on public.task_assignments for insert
   with check (public.is_admin());
 
+drop policy if exists "assignments_delete_admin" on public.task_assignments;
 create policy "assignments_delete_admin"
   on public.task_assignments for delete
   using (public.is_admin());
 
 -- ── Comments RLS ─────────────────────────────────────────────
+drop policy if exists "comments_select_authenticated" on public.comments;
 create policy "comments_select_authenticated"
   on public.comments for select
   using (auth.uid() is not null);
 
+drop policy if exists "comments_insert_authenticated" on public.comments;
 create policy "comments_insert_authenticated"
   on public.comments for insert
   with check (auth.uid() is not null);
 
 -- ── Notification Log RLS ─────────────────────────────────────
+drop policy if exists "notif_log_admin" on public.notification_log;
 create policy "notif_log_admin"
   on public.notification_log for all
   using (public.is_admin());
+
+-- ============================================================
+-- Verify
+-- ============================================================
+select column_name, data_type
+from information_schema.columns
+where table_schema = 'public' and table_name = 'tasks'
+order by ordinal_position;
