@@ -184,16 +184,8 @@ create policy "tasks_select_all_authenticated"
   on public.tasks for select
   using (auth.uid() is not null);
 
--- Assigned users: UPDATE only tasks they're assigned to
+-- Users are view-only; only admins/owners may update tasks (via tasks_all_admin above)
 drop policy if exists "tasks_update_assigned" on public.tasks;
-create policy "tasks_update_assigned"
-  on public.tasks for update
-  using (
-    exists (
-      select 1 from public.task_assignments
-      where task_id = tasks.id and user_id = auth.uid()
-    )
-  );
 
 -- ── Task Assignments RLS ─────────────────────────────────────
 drop policy if exists "assignments_select_authenticated" on public.task_assignments;

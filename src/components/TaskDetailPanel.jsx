@@ -180,14 +180,18 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
           </div>
           <div>
             <label className="label">Status</label>
-            <select className="input w-full" value={form.status}
-              onChange={e => handleStatusChange(e.target.value)}>
-              {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </select>
+            {isAdmin ? (
+              <select className="input w-full" value={form.status}
+                onChange={e => handleStatusChange(e.target.value)}>
+                {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+              </select>
+            ) : (
+              <StatusBadge status={form.status} />
+            )}
           </div>
         </div>
 
-        {suggestion && (
+        {isAdmin && suggestion && (
           <div className="text-xs px-3 py-2 rounded bg-amber-500/10 text-amber-400 flex items-center justify-between gap-2">
             <span className="flex items-center gap-2">
               Suggest: <StatusBadge status={suggestion} />
@@ -267,21 +271,23 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
         {/* Progress */}
         <div>
           <label className="label">Progress — {form.progress_percent}%</label>
-          <div className="flex items-center gap-2">
-            <input type="range" min="0" max="100" step="5"
-              value={form.progress_percent}
-              onChange={e => field('progress_percent', Number(e.target.value))}
-              onMouseUp={handleBlur}
-              className="flex-1" />
-            <div className="flex gap-1">
-              <button
-                onClick={() => { const v = Math.max(0, form.progress_percent - 10); field('progress_percent', v); updateTask(taskId, { ...form, progress_percent: v }); }}
-                className="w-6 h-6 rounded bg-[var(--surface2)] text-xs focus-ring" style={{ color: 'var(--text-muted)' }}>−</button>
-              <button
-                onClick={() => { const v = Math.min(100, form.progress_percent + 10); field('progress_percent', v); updateTask(taskId, { ...form, progress_percent: v }); }}
-                className="w-6 h-6 rounded bg-[var(--surface2)] text-xs focus-ring" style={{ color: 'var(--text-muted)' }}>+</button>
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <input type="range" min="0" max="100" step="5"
+                value={form.progress_percent}
+                onChange={e => field('progress_percent', Number(e.target.value))}
+                onMouseUp={handleBlur}
+                className="flex-1" />
+              <div className="flex gap-1">
+                <button
+                  onClick={() => { const v = Math.max(0, form.progress_percent - 10); field('progress_percent', v); updateTask(taskId, { ...form, progress_percent: v }); }}
+                  className="w-6 h-6 rounded bg-[var(--surface2)] text-xs focus-ring" style={{ color: 'var(--text-muted)' }}>−</button>
+                <button
+                  onClick={() => { const v = Math.min(100, form.progress_percent + 10); field('progress_percent', v); updateTask(taskId, { ...form, progress_percent: v }); }}
+                  className="w-6 h-6 rounded bg-[var(--surface2)] text-xs focus-ring" style={{ color: 'var(--text-muted)' }}>+</button>
+              </div>
             </div>
-          </div>
+          )}
           <div className="mt-1 h-1.5 rounded-full bg-[var(--surface2)] overflow-hidden">
             <div className="h-full rounded-full transition-all" style={{ width: `${form.progress_percent}%`, background: 'var(--accent)' }} />
           </div>
@@ -305,13 +311,20 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
         )}
 
         {/* Notes */}
-        <div>
-          <label className="label">Notes</label>
-          <textarea className="input w-full resize-none mono" rows={4}
-            value={form.notes}
-            onChange={e => field('notes', e.target.value)}
-            onBlur={handleBlur} />
-        </div>
+        {isAdmin ? (
+          <div>
+            <label className="label">Notes</label>
+            <textarea className="input w-full resize-none mono" rows={4}
+              value={form.notes}
+              onChange={e => field('notes', e.target.value)}
+              onBlur={handleBlur} />
+          </div>
+        ) : form.notes ? (
+          <div>
+            <label className="label">Notes</label>
+            <p className="text-xs mono whitespace-pre-wrap" style={{ color: 'var(--text)' }}>{form.notes}</p>
+          </div>
+        ) : null}
 
         {/* Assignments */}
         {isSupabaseEnabled && (

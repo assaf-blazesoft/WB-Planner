@@ -24,6 +24,7 @@ export default function AdminPanel() {
   const [email,    setEmail]    = useState('');
   const [sending,  setSending]  = useState(false);
   const [message,  setMessage]  = useState('');
+  const [roleStatus, setRoleStatus] = useState({}); // { [userId]: 'saving' | 'saved' | 'error' }
   const isOwner = profile?.role === 'owner';
 
   useEffect(() => {
@@ -99,15 +100,19 @@ export default function AdminPanel() {
   }
 
   async function changeUserRole(userId, newRole) {
+    setRoleStatus(s => ({ ...s, [userId]: 'saving' }));
     const { error } = await supabase
       .from('profiles')
       .update({ role: newRole })
       .eq('id', userId);
     if (error) {
       setMessage('Failed to change role: ' + error.message);
+      setRoleStatus(s => ({ ...s, [userId]: 'error' }));
       return;
     }
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+    setRoleStatus(s => ({ ...s, [userId]: 'saved' }));
+    setTimeout(() => setRoleStatus(s => { const n = { ...s }; delete n[userId]; return n; }), 1500);
   }
 
   return (
@@ -199,18 +204,24 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 {isOwner && u.id !== profile?.id ? (
-                  <select
-                    value={u.role}
-                    onChange={e => changeUserRole(u.id, e.target.value)}
-                    className="text-[10px] font-medium rounded-full px-2 py-0.5 border-0 outline-none cursor-pointer"
-                    style={{ ...roleBadgeStyle(u.role), background: roleBadgeStyle(u.role).background }}
-                  >
-                    {ROLES.map(r => (
-                      <option key={r} value={r} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-1.5">
+                    <select
+                      value={u.role}
+                      onChange={e => changeUserRole(u.id, e.target.value)}
+                      disabled={roleStatus[u.id] === 'saving'}
+                      className="text-[10px] font-medium rounded-full px-2 py-0.5 border-0 outline-none cursor-pointer disabled:opacity-50"
+                      style={{ ...roleBadgeStyle(u.role) }}
+                    >
+                      {ROLES.map(r => (
+                        <option key={r} value={r} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
+                    {roleStatus[u.id] === 'saving' && <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>saving…</span>}
+                    {roleStatus[u.id] === 'saved'  && <span className="text-[9px]" style={{ color: 'var(--status-done)' }}>saved</span>}
+                    {roleStatus[u.id] === 'error'  && <span className="text-[9px]" style={{ color: 'var(--status-blocked)' }}>failed</span>}
+                  </div>
                 ) : (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={roleBadgeStyle(u.role)}>
                     {u.role}

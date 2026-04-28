@@ -1,5 +1,6 @@
 ﻿import React, { useState, useRef } from 'react';
 import { useStore, useFilteredTasks } from '../store/tasks';
+import { useAuth } from '../contexts/AuthContext';
 import { weekRangeLabel } from '../utils/dates';
 import { downloadCSV, downloadJSON, csvToTasks } from '../utils/csv';
 import { TRACK_COLORS, PRIORITY_COLORS, STATUSES, TRACKS, PRIORITIES } from '../lib/constants';
@@ -24,6 +25,7 @@ export default function TableView({ onSelectTask }) {
   const tasksLoading = useStore(s => s.tasksLoading);
   const totalTasks = useStore(s => s.tasks.length);
   const clearFilters = useStore(s => s.clearFilters);
+  const { isAdmin } = useAuth();
 
   const [sortKey, setSortKey] = useState('title');
   const [sortDir, setSortDir] = useState('asc');
@@ -101,7 +103,7 @@ export default function TableView({ onSelectTask }) {
       <div className="flex items-center justify-between px-4 py-2 border-b text-xs" style={{ borderColor: 'var(--border)' }}>
         <span className="text-[var(--text-muted)]">{sorted.length} tasks</span>
         <div className="flex items-center gap-2">
-          {selected.size > 0 && (
+          {isAdmin && selected.size > 0 && (
             <>
               <span className="text-[var(--text-muted)]">{selected.size} selected</span>
               <input
@@ -115,7 +117,7 @@ export default function TableView({ onSelectTask }) {
             </>
           )}
           <input type="file" accept=".csv" ref={fileRef} onChange={handleImport} className="hidden" />
-          <button onClick={() => fileRef.current?.click()} className="btn-sm text-[var(--text-muted)] hover:text-[var(--text)]">Import CSV</button>
+          {isAdmin && <button onClick={() => fileRef.current?.click()} className="btn-sm text-[var(--text-muted)] hover:text-[var(--text)]">Import CSV</button>}
           <button onClick={() => downloadCSV(tasks)} className="btn-sm text-[var(--text-muted)] hover:text-[var(--text)]">Export CSV</button>
           <button onClick={() => downloadJSON(tasks, project)} className="btn-sm text-[var(--text-muted)] hover:text-[var(--text)]">Export JSON</button>
         </div>
@@ -126,10 +128,12 @@ export default function TableView({ onSelectTask }) {
         <table className="w-full text-xs border-collapse">
           <thead className="sticky top-0 z-10" style={{ background: 'var(--surface2)' }}>
             <tr>
-              <th className="th w-8">
-                <input type="checkbox" checked={selected.size === sorted.length && sorted.length > 0}
-                  onChange={toggleAll} className="rounded" />
-              </th>
+              {isAdmin && (
+                <th className="th w-8">
+                  <input type="checkbox" checked={selected.size === sorted.length && sorted.length > 0}
+                    onChange={toggleAll} className="rounded" />
+                </th>
+              )}
               {COLUMNS.map(col => (
                 <th key={col.key} className="th cursor-pointer select-none" onClick={() => toggleSort(col.key)}>
                   {col.label} {sortKey === col.key ? (sortDir === 'asc' ? '↑' : '↓') : ''}
@@ -141,7 +145,7 @@ export default function TableView({ onSelectTask }) {
           <tbody>
             {tasksLoading && Array.from({ length: 7 }, (_, i) => (
               <tr key={i} className="border-b animate-pulse" style={{ borderColor: 'var(--border)' }}>
-                <td className="td"><div className="w-4 h-4 rounded bg-[var(--surface2)]" /></td>
+                {isAdmin && <td className="td"><div className="w-4 h-4 rounded bg-[var(--surface2)]" /></td>}
                 {COLUMNS.map(col => (
                   <td key={col.key} className="td">
                     <div className="h-3 rounded bg-[var(--surface2)]"
@@ -183,9 +187,11 @@ export default function TableView({ onSelectTask }) {
             {!tasksLoading && sorted.map(task => (
               <tr key={task.id} className="border-b hover:bg-[var(--surface2)] transition-colors group"
                 style={{ borderColor: 'var(--border)' }}>
-                <td className="td text-center">
-                  <input type="checkbox" checked={selected.has(task.id)} onChange={() => toggleSelect(task.id)} className="rounded" />
-                </td>
+                {isAdmin && (
+                  <td className="td text-center">
+                    <input type="checkbox" checked={selected.has(task.id)} onChange={() => toggleSelect(task.id)} className="rounded" />
+                  </td>
+                )}
                 {COLUMNS.map(col => (
                   <td key={col.key} className="td">
                     <Cell
@@ -198,6 +204,7 @@ export default function TableView({ onSelectTask }) {
                       onCommit={commitEdit}
                       onCancel={() => setEditing(null)}
                       project={project}
+                      isAdmin={isAdmin}
                     />
                   </td>
                 ))}
@@ -217,8 +224,8 @@ export default function TableView({ onSelectTask }) {
 }
 
 
-function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCancel, project }) {
-  const isEditing = editing?.id === task.id && editing?.key === col.key;
+function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCancel, project, isAdmin }) {
+  const isEditing = isAdmin && editing?.id === task.id && editing?.key === col.key;
 
   if (col.key === 'weeks') {
     return <span className="text-[var(--text-muted)]">{weekRangeLabel(project.start_date, task.weeks)}</span>;
@@ -247,9 +254,9 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
       );
     }
     return (
-      <span className="px-1.5 py-0.5 rounded-full text-white text-xs cursor-pointer"
+      <span className={`px-1.5 py-0.5 rounded-full text-white text-xs ${isAdmin ? 'cursor-pointer' : ''}`}
         style={{ background: TRACK_COLORS[task.track] || '#888' }}
-        onClick={() => onStart(task.id, col.key, task[col.key])}>
+        onClick={isAdmin ? () => onStart(task.id, col.key, task[col.key]) : undefined}>
         {task.track}
       </span>
     );
@@ -269,7 +276,7 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
     return (
       <StatusBadge
         status={task.status}
-        onClick={() => onStart(task.id, col.key, task[col.key])}
+        onClick={isAdmin ? () => onStart(task.id, col.key, task[col.key]) : undefined}
       />
     );
   }
@@ -286,8 +293,9 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
       );
     }
     return (
-      <span style={{ color: PRIORITY_COLORS[task.priority] }} className="font-medium cursor-pointer"
-        onClick={() => onStart(task.id, col.key, task[col.key])}>
+      <span style={{ color: PRIORITY_COLORS[task.priority] }}
+        className={`font-medium ${isAdmin ? 'cursor-pointer' : ''}`}
+        onClick={isAdmin ? () => onStart(task.id, col.key, task[col.key]) : undefined}>
         {task.priority}
       </span>
     );
@@ -312,9 +320,9 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
 
   return (
     <span
-      className="cursor-text hover:bg-[var(--surface2)] px-1 py-0.5 rounded block truncate max-w-[200px]"
+      className={`px-1 py-0.5 rounded block truncate max-w-[200px] ${isAdmin ? 'cursor-text hover:bg-[var(--surface2)]' : ''}`}
       style={{ color: 'var(--text)' }}
-      onClick={() => onStart(task.id, col.key, task[col.key])}
+      onClick={isAdmin ? () => onStart(task.id, col.key, task[col.key]) : undefined}
       title={String(task[col.key] ?? '')}
     >
       {String(task[col.key] ?? '') || <span className="text-[var(--text-muted)] italic">—</span>}
