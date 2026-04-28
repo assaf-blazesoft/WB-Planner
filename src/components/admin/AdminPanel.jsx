@@ -101,10 +101,10 @@ export default function AdminPanel() {
 
   async function changeUserRole(userId, newRole) {
     setRoleStatus(s => ({ ...s, [userId]: 'saving' }));
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role: newRole })
-      .eq('id', userId);
+    const { error } = await supabase.rpc('change_user_role', {
+      target_user_id: userId,
+      new_role: newRole,
+    });
     if (error) {
       setMessage('Failed to change role: ' + error.message);
       setRoleStatus(s => ({ ...s, [userId]: 'error' }));

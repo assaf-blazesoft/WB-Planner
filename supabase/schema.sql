@@ -146,17 +146,27 @@ create policy "profiles_update_own"
   on public.profiles for update
   using (id = auth.uid());
 
--- Owner can update any user's role (but not their own, to prevent accidental lockout)
+-- Role changes go through the change_user_role RPC (security definer) instead of
+-- a direct UPDATE policy, so RLS cannot silently swallow the write.
 drop policy if exists "profiles_update_owner" on public.profiles;
-create policy "profiles_update_owner"
-  on public.profiles for update
-  using (
-    id <> auth.uid()
-    and exists (
-      select 1 from public.profiles
-      where id = auth.uid() and role = 'owner'
-    )
-  );
+
+create or replace function public.change_user_role(target_user_id uuid, new_role text)
+returns void language plpgsql security definer as $$
+begin
+  if not exists (
+    select 1 from public.profiles where id = auth.uid() and role = 'owner'
+  ) then
+    raise exception 'Only owners can change user roles';
+  end if;
+  if target_user_id = auth.uid() then
+    raise exception 'Cannot change your own role';
+  end if;
+  if new_role not in ('user', 'admin', 'owner') then
+    raise exception 'Invalid role value';
+  end if;
+  update public.profiles set role = new_role where id = target_user_id;
+end;
+$$;
 
 -- ── Invites RLS ──────────────────────────────────────────────
 drop policy if exists "invites_all_admin" on public.invites;
