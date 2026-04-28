@@ -3,7 +3,7 @@ import { useStore, useFilteredTasks } from '../store/tasks';
 import { useAuth } from '../contexts/AuthContext';
 import { weekRangeLabel } from '../utils/dates';
 import { downloadCSV, downloadJSON, csvToTasks } from '../utils/csv';
-import { TRACK_COLORS, PRIORITY_COLORS, STATUSES, TRACKS, PRIORITIES } from '../lib/constants';
+import { TRACK_COLORS, PRIORITY_COLORS, STATUSES, TRACKS, PRIORITIES, OWNERS } from '../lib/constants';
 import StatusBadge from './StatusBadge';
 
 const COLUMNS = [
@@ -106,12 +106,14 @@ export default function TableView({ onSelectTask }) {
           {isAdmin && selected.size > 0 && (
             <>
               <span className="text-[var(--text-muted)]">{selected.size} selected</span>
-              <input
-                placeholder="Set owner..."
+              <select
                 value={bulkOwner}
                 onChange={e => setBulkOwner(e.target.value)}
-                className="input w-28"
-              />
+                className="input"
+              >
+                <option value="">Set owner…</option>
+                {OWNERS.map(o => <option key={o} value={o}>{o}</option>)}
+              </select>
               <button onClick={applyBulkOwner} className="btn-sm bg-[var(--accent)] text-white">Apply</button>
               <button onClick={deleteSelected} className="btn-sm text-red-400 hover:bg-red-500/10">Delete</button>
             </>
@@ -297,6 +299,29 @@ function Cell({ task, col, editing, editVal, setEditVal, onStart, onCommit, onCa
         className={`font-medium ${isAdmin ? 'cursor-pointer' : ''}`}
         onClick={isAdmin ? () => onStart(task.id, col.key, task[col.key]) : undefined}>
         {task.priority}
+      </span>
+    );
+  }
+
+  if (col.key === 'owner') {
+    if (isEditing) {
+      return (
+        <select autoFocus className="input w-full" value={editVal}
+          onChange={e => setEditVal(e.target.value)}
+          onBlur={onCommit}
+          onKeyDown={e => { if (e.key === 'Enter') onCommit(); if (e.key === 'Escape') onCancel(); }}>
+          <option value="">— unassigned —</option>
+          {OWNERS.map(o => <option key={o} value={o}>{o}</option>)}
+        </select>
+      );
+    }
+    return (
+      <span
+        className={`px-1 py-0.5 rounded block truncate ${isAdmin ? 'cursor-pointer hover:bg-[var(--surface2)]' : ''}`}
+        style={{ color: task.owner ? 'var(--text)' : 'var(--text-muted)' }}
+        onClick={isAdmin ? () => onStart(task.id, col.key, task[col.key]) : undefined}
+      >
+        {task.owner || <span className="italic">—</span>}
       </span>
     );
   }

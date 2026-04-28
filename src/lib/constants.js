@@ -41,3 +41,5 @@ export const PRIORITIES = [
   { value: 'medium', label: 'Medium' },
   { value: 'low',    label: 'Low' },
 ];
+
+export const OWNERS = ['Assaf', 'Emre', 'Dimitry', 'Jacob', 'Natalia'];

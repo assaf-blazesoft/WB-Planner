@@ -5,12 +5,12 @@
 @layer base {
   /* Dark is the default (applied to :root) */
   :root, .dark {
-    --bg:         #0f1117;
-    --surface:    #1a1d27;
-    --surface2:   #222636;
-    --border:     #2d3148;
-    --text:       #f1f5f9;
-    --text-muted: #a0aec0;
+    --bg:         #0d0f18;
+    --surface:    #181b28;
+    --surface2:   #1f2235;
+    --border:     #272b42;
+    --text:       #eef2f7;
+    --text-muted: #8892a4;
     --ring:       #7F77DD;
     --accent:       #7F77DD;
     --accent-hover: #6b63cc;
@@ -23,10 +23,10 @@
 
   /* Light theme opt-in */
   .light {
-    --bg:         #f9fafb;
+    --bg:         #f4f6f9;
     --surface:    #ffffff;
-    --surface2:   #f3f4f6;
-    --border:     #e5e7eb;
+    --surface2:   #edf0f4;
+    --border:     #dde1e9;
     --text:       #111827;
     --text-muted: #6b7280;
     --ring:       #7F77DD;
@@ -44,32 +44,52 @@
     color: var(--text);
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   * { border-color: var(--border); }
 
-  ::-webkit-scrollbar        { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track  { background: var(--bg); }
-  ::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar        { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 }
 
 @layer components {
   .input {
-    @apply px-2 py-1 rounded border text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
-    background: var(--surface);
+    @apply px-3 py-1.5 rounded-md border text-xs transition-colors duration-150
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]
+      focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
+    background: var(--surface2);
     border-color: var(--border);
     color: var(--text);
   }
 
+  .input:hover:not(:focus-visible) {
+    border-color: var(--text-muted);
+  }
+
+  select.input {
+    @apply pr-6 cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238892a4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
   .label {
-    @apply block text-xs font-medium mb-1;
+    @apply block text-[11px] font-semibold mb-1 tracking-wide uppercase;
     color: var(--text-muted);
+    letter-spacing: 0.04em;
   }
 
   .th {
-    @apply px-3 py-2 text-left text-xs font-semibold border-b;
+    @apply px-3 py-2.5 text-left text-[10px] font-semibold border-b tracking-wider uppercase;
     color: var(--text-muted);
     border-color: var(--border);
+    letter-spacing: 0.06em;
   }
 
   .td {
@@ -78,16 +98,25 @@
   }
 
   .btn-sm {
-    @apply px-2 py-1 rounded text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
+    @apply px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-150
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]
+      focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
   }
 
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]
+      focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)];
   }
 
   .mono {
     font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
     font-size: 0.75rem;
     letter-spacing: -0.01em;
+  }
+
+  .card {
+    @apply rounded-xl border;
+    background: var(--surface);
+    border-color: var(--border);
   }
 }

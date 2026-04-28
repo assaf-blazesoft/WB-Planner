@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/tasks';
-import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
+import { TRACKS, STATUSES, PRIORITIES, OWNERS } from '../lib/constants';
 import { weekRangeLabel, formatDateFull } from '../utils/dates';
 
 const DEFAULT_FORM = {
@@ -51,15 +51,20 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-lg rounded-xl shadow-2xl p-6 space-y-4 mx-4"
-        style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+        className="relative w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4 mx-4"
+        style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}
       >
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-base" style={{ color: 'var(--text)' }}>New Task</h2>
-          <button type="button" onClick={onClose} className="text-lg text-[var(--text-muted)] hover:text-[var(--text)] focus-ring rounded">×</button>
+          <h2 className="font-semibold text-sm tracking-wide" style={{ color: 'var(--text)' }}>New Task</h2>
+          <button type="button" onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-sm transition-colors focus-ring"
+            style={{ color: 'var(--text-muted)', background: 'var(--surface2)' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--text)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+          >×</button>
         </div>
 
         <div>
@@ -97,7 +102,10 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
           </div>
           <div>
             <label className="label">Owner</label>
-            <input className="input w-full" value={form.owner} onChange={e => field('owner', e.target.value)} />
+            <select className="input w-full" value={form.owner} onChange={e => field('owner', e.target.value)}>
+              <option value="">— unassigned —</option>
+              {OWNERS.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
           </div>
         </div>
 
@@ -142,13 +150,15 @@ export default function TaskModal({ initialValues, onClose, onSaved }) {
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex justify-end gap-2 pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
           <button type="button" onClick={onClose}
-            className="px-4 py-1.5 rounded text-sm text-[var(--text-muted)] hover:bg-[var(--surface2)] focus-ring">
+            className="px-4 py-2 rounded-lg text-xs font-medium transition-colors focus-ring"
+            style={{ color: 'var(--text-muted)', background: 'var(--surface2)' }}>
             Cancel
           </button>
           <button type="submit"
-            className="px-4 py-1.5 rounded text-sm bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] font-medium focus-ring">
+            className="px-4 py-2 rounded-lg text-xs font-semibold transition-colors focus-ring"
+            style={{ background: 'var(--accent)', color: '#fff' }}>
             Create Task
           </button>
         </div>

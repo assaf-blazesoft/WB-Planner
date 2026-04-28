@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase, isSupabaseEnabled } from '../lib/supabase';
 import { sendEmail } from '../lib/email';
 import { weekRangeLabel, formatDateFull } from '../utils/dates';
-import { TRACKS, STATUSES, PRIORITIES } from '../lib/constants';
+import { TRACKS, STATUSES, PRIORITIES, OWNERS } from '../lib/constants';
 import TaskComments from './TaskComments';
 import StatusBadge from './StatusBadge';
 
@@ -214,8 +214,11 @@ export default function TaskDetailPanel({ taskId, onClose, onDuplicate }) {
             </div>
             <div>
               <label className="label">Owner</label>
-              <input className="input w-full" value={form.owner}
-                onChange={e => field('owner', e.target.value)} onBlur={handleBlur} />
+              <select className="input w-full" value={form.owner || ''}
+                onChange={e => { field('owner', e.target.value); save({ ...form, owner: e.target.value }); }}>
+                <option value="">— unassigned —</option>
+                {OWNERS.map(o => <option key={o} value={o}>{o}</option>)}
+              </select>
             </div>
           </div>
         )}

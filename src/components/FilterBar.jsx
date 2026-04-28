@@ -1,6 +1,6 @@
 ﻿import React, { useRef } from 'react';
 import { useStore } from '../store/tasks';
-import { STATUSES as BASE_STATUSES, PRIORITIES as BASE_PRIORITIES } from '../lib/constants';
+import { STATUSES as BASE_STATUSES, PRIORITIES as BASE_PRIORITIES, OWNERS } from '../lib/constants';
 import { weekToStartDate, formatDate } from '../utils/dates';
 
 const STATUSES = [{ value: '', label: 'All statuses' }, ...BASE_STATUSES];
@@ -27,16 +27,16 @@ export default function FilterBar({ searchRef }) {
   const hasFilters = filters.track || filters.status || filters.owner || filters.week || filters.search;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 px-4 py-2 border-b text-xs"
-      style={{ background: 'var(--surface2)', borderColor: 'var(--border)' }}>
+    <div className="flex flex-wrap items-center gap-1.5 px-4 py-2 border-b text-xs"
+      style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
 
       <input
         ref={searchRef}
         type="text"
-        placeholder="Search... (/)"
+        placeholder="Search…  (/)"
         value={filters.search}
         onChange={e => setFilter('search', e.target.value)}
-        className="input w-40"
+        className="input w-44"
       />
 
       <Select
@@ -51,12 +51,10 @@ export default function FilterBar({ searchRef }) {
         options={STATUSES}
       />
 
-      <input
-        type="text"
-        placeholder="Owner"
+      <Select
         value={filters.owner}
-        onChange={e => setFilter('owner', e.target.value)}
-        className="input w-24"
+        onChange={v => setFilter('owner', v)}
+        options={[{ value: '', label: 'All owners' }, ...OWNERS.map(o => ({ value: o, label: o }))]}
       />
 
       <Select
@@ -74,9 +72,10 @@ export default function FilterBar({ searchRef }) {
             setFilter('week', '');
             setFilter('search', '');
           }}
-          className="px-2 py-1 rounded text-xs text-[var(--text-muted)] hover:text-red-400 transition-colors focus-ring"
+          className="px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors focus-ring"
+          style={{ color: 'var(--text-muted)', background: 'var(--surface2)' }}
         >
-          Clear ✕
+          Clear
         </button>
       )}
     </div>
