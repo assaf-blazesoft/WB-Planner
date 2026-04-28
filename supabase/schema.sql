@@ -146,6 +146,18 @@ create policy "profiles_update_own"
   on public.profiles for update
   using (id = auth.uid());
 
+-- Owner can update any user's role (but not their own, to prevent accidental lockout)
+drop policy if exists "profiles_update_owner" on public.profiles;
+create policy "profiles_update_owner"
+  on public.profiles for update
+  using (
+    id <> auth.uid()
+    and exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role = 'owner'
+    )
+  );
+
 -- ── Invites RLS ──────────────────────────────────────────────
 drop policy if exists "invites_all_admin" on public.invites;
 create policy "invites_all_admin"

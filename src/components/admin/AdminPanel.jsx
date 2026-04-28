@@ -3,6 +3,20 @@ import { supabase, isSupabaseEnabled } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendEmail } from '../../lib/email';
 
+const ROLES = ['user', 'admin', 'owner'];
+
+function roleBadgeStyle(role) {
+  if (role === 'owner') return {
+    background: 'color-mix(in srgb, var(--accent) 13%, transparent)',
+    color: 'var(--accent)',
+  };
+  if (role === 'admin') return {
+    background: 'color-mix(in srgb, var(--status-in-progress) 13%, transparent)',
+    color: 'var(--status-in-progress)',
+  };
+  return { background: 'var(--surface2)', color: 'var(--text-muted)' };
+}
+
 export default function AdminPanel() {
   const { profile } = useAuth();
   const [invites,  setInvites]  = useState([]);
@@ -10,6 +24,7 @@ export default function AdminPanel() {
   const [email,    setEmail]    = useState('');
   const [sending,  setSending]  = useState(false);
   const [message,  setMessage]  = useState('');
+  const isOwner = profile?.role === 'owner';
 
   useEffect(() => {
     if (isSupabaseEnabled) {
@@ -81,6 +96,18 @@ export default function AdminPanel() {
   async function revokeInvite(id) {
     await supabase.from('invites').delete().eq('id', id);
     setInvites(prev => prev.filter(i => i.id !== id));
+  }
+
+  async function changeUserRole(userId, newRole) {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ role: newRole })
+      .eq('id', userId);
+    if (error) {
+      setMessage('Failed to change role: ' + error.message);
+      return;
+    }
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
   }
 
   return (
@@ -171,13 +198,24 @@ export default function AdminPanel() {
                     <span className="ml-2" style={{ color: 'var(--text-muted)' }}>{u.email}</span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-                  style={{
-                    background: u.role === 'owner' ? 'color-mix(in srgb, var(--accent) 13%, transparent)' : u.role === 'admin' ? 'color-mix(in srgb, var(--status-in-progress) 13%, transparent)' : 'var(--surface2)',
-                    color: u.role === 'owner' ? 'var(--accent)' : u.role === 'admin' ? 'var(--status-in-progress)' : 'var(--text-muted)',
-                  }}>
-                  {u.role}
-                </span>
+                {isOwner && u.id !== profile?.id ? (
+                  <select
+                    value={u.role}
+                    onChange={e => changeUserRole(u.id, e.target.value)}
+                    className="text-[10px] font-medium rounded-full px-2 py-0.5 border-0 outline-none cursor-pointer"
+                    style={{ ...roleBadgeStyle(u.role), background: roleBadgeStyle(u.role).background }}
+                  >
+                    {ROLES.map(r => (
+                      <option key={r} value={r} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={roleBadgeStyle(u.role)}>
+                    {u.role}
+                  </span>
+                )}
               </div>
             ))}
           </div>
